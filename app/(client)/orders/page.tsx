@@ -39,8 +39,10 @@ const OrdersPage = async () => {
                       <TableHead className="hidden md:table-cell">
                         Datum
                       </TableHead>
-                      <TableHead>Kupac</TableHead>
-                      <TableHead className="w-[100px] md:w-auto">
+                      <TableHead className="hidden md:table-cell">
+                        Kupac
+                      </TableHead>
+                      <TableHead className="hidden w-[100px] md:table-cell md:w-auto">
                         Email
                       </TableHead>
                       <TableHead>Ukupno</TableHead>
