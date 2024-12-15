@@ -6,14 +6,15 @@ import { getAllCategories, getAllProducts, getHero } from "@/sanity/helpers";
 export default async function Home({
   searchParams,
 }: {
-  searchParams: { category?: string };
+  searchParams: { category?: string | undefined };
 }) {
-  const categorySlug = await searchParams?.category;
+  const params = await searchParams;
+  const categorySlug = params.category;
   const heroes = await getHero();
   const products = await getAllProducts(categorySlug);
   const categories = await getAllCategories();
 
-  console.log(categorySlug);
+  console.log(params);
 
   return (
     <div>
