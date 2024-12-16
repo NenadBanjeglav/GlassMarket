@@ -17,16 +17,18 @@ interface CartState {
   getSubtotalPrice: () => number;
   getItemCount: (productId: string) => number;
   getGroupedItems: () => CartItem[];
+  setItemCount: (productId: string, quantity: number) => void;
 }
 
 const userCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
+
       addItem: (product) =>
         set((state) => {
           const existingItem = state.items.find(
-            (item) => item.product._id == product._id
+            (item) => item.product._id === product._id
           );
           if (existingItem) {
             return {
@@ -40,6 +42,7 @@ const userCartStore = create<CartState>()(
             return { items: [...state.items, { product, quantity: 1 }] };
           }
         }),
+
       removeItem: (productId) =>
         set((state) => ({
           items: state.items.reduce((acc, item) => {
@@ -53,16 +56,18 @@ const userCartStore = create<CartState>()(
             return acc;
           }, [] as CartItem[]),
         })),
+
       deleteCartProduct: (productId) =>
         set((state) => ({
           items: state.items.filter(({ product }) => product._id !== productId),
         })),
+
       resetCart: () => set({ items: [] }),
 
       getTotalPrice: () => {
         return get().items.reduce(
           (total, item) => total + (item.product.price ?? 0) * item.quantity,
-          0 // Add an initial value of 0
+          0
         );
       },
 
@@ -70,16 +75,27 @@ const userCartStore = create<CartState>()(
         return get().items.reduce((total, item) => {
           const price = item.product.price ?? 0;
           const discount = ((item.product.discount ?? 0) * price) / 100;
-          const discountedPrice = price - discount; // Subtract the discount, not add
-
+          const discountedPrice = price - discount;
           return total + discountedPrice * item.quantity;
-        }, 0); // Add an initial value of 0
+        }, 0);
       },
-      getItemCount: (producId) => {
-        const item = get().items.find((item) => item.product._id === producId);
+
+      getItemCount: (productId) => {
+        const item = get().items.find((item) => item.product._id === productId);
         return item ? item.quantity : 0;
       },
+
       getGroupedItems: () => get().items,
+
+      setItemCount: (productId, quantity) =>
+        set((state) => ({
+          items:
+            quantity > 0
+              ? state.items.map((item) =>
+                  item.product._id === productId ? { ...item, quantity } : item
+                )
+              : state.items.filter((item) => item.product._id !== productId),
+        })),
     }),
 
     { name: "cart-store" }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Product } from "@/sanity.types";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Minus, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -15,35 +15,63 @@ interface Props {
 }
 
 const QuantityButtons = ({ product, className }: Props) => {
-  const { addItem, removeItem, getItemCount } = userCartStore();
+  const { addItem, removeItem, getItemCount, setItemCount } = userCartStore();
+  const [inputCount, setInputCount] = useState(
+    getItemCount(product._id).toString()
+  );
+
+  useEffect(() => {
+    setInputCount(getItemCount(product._id).toString());
+  }, [getItemCount(product._id)]);
 
   const handleRemoveProduct = () => {
     removeItem(product._id);
-    toast.success(`${product.name}...izbacen iz korpe!`);
+    setInputCount(getItemCount(product._id).toString());
+    toast.success(`${product.name}... izbačen iz korpe!`);
   };
+
   const handleAddProduct = () => {
     addItem(product);
-    toast.success(`${product.name}...dodat u korpu!`);
+    setInputCount(getItemCount(product._id).toString());
+    toast.success(`${product.name}... dodat u korpu!`);
   };
-  const itemCount = getItemCount(product._id);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) {
+      setInputCount(value);
+    }
+  };
+
+  const handleInputBlur = () => {
+    const count = inputCount === "" ? 0 : parseInt(inputCount, 10);
+    setItemCount(product._id, count);
+    setInputCount(getItemCount(product._id).toString());
+  };
+
+  // const itemCount = getItemCount(product._id);
 
   return (
-    <div className={cn("flex items-center gap-1 pb-1 text-base", className)}>
+    <div className={cn("flex items-center gap-2 pb-1 text-base", className)}>
       <Button
         variant="outline"
         size="icon"
-        className="size-4 md:size-6"
+        className="size-5"
         onClick={handleRemoveProduct}
       >
         <Minus />
       </Button>
-      <span className="w-8 text-center font-semibold text-darkBlue">
-        {itemCount}
-      </span>
+      <input
+        type="text"
+        value={inputCount}
+        onChange={handleInputChange}
+        onBlur={handleInputBlur}
+        className="w-8 rounded-md border text-center font-semibold text-darkBlue"
+      />
       <Button
         variant="outline"
         size="icon"
-        className="size-4 md:size-6"
+        className="size-5"
         onClick={handleAddProduct}
       >
         <Plus />

@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { urlFor } from "@/sanity/lib/image";
 import userCartStore from "@/store";
 import { useAuth, useUser } from "@clerk/nextjs";
-import { ShoppingCart, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -74,11 +74,83 @@ const CartPage = () => {
         <Container>
           {groupedItems.length ? (
             <>
-              <div className="flex items-center gap-2  py-5">
-                <ShoppingCart className="size-6 text-primary" />
-                <h1 className="text-2xl font-semibold">Korpa</h1>
+              <div className="flex items-center justify-center gap-2  py-5">
+                <h1 className="text-center text-2xl font-semibold text-darkBlue">
+                  Korpa
+                </h1>
               </div>
               <div className="grid pb-40 md:gap-8 lg:grid-cols-3">
+                <div className="lg:col-span-2">
+                  <div className="grid grid-cols-4 rounded-t-lg border bg-white p-2.5 text-base font-semibold md:grid-cols-6">
+                    <h2 className="col-span-1 md:col-span-3 md:ml-6">
+                      Proizvod
+                    </h2>
+                    <h2 className=" text-center ">Cena</h2>
+                    <h2 className=" text-center ">Kol.</h2>
+                    <h2 className=" text-right md:text-center">Ukupno</h2>
+                  </div>
+
+                  <div className="rounded-b-lg border border-t-0 bg-white">
+                    {groupedItems.map(({ product }) => {
+                      const itemCount = getItemCount(product._id);
+                      return (
+                        <div
+                          key={product._id}
+                          className="grid grid-cols-4 border-b p-2.5 last:border-b-0 md:grid-cols-6"
+                        >
+                          <div className="col-span-1 flex items-center md:col-span-3">
+                            <Trash2
+                              onClick={() => handleDeleteProduct(product._id)}
+                              className="hoverEffect mr-1 size-4 cursor-pointer text-gray-500 hover:text-red-600 md:size-5"
+                            />
+                            {product.image && (
+                              <Link
+                                href={`/product/${product.slug?.current}`}
+                                className="group mr-2 overflow-hidden rounded-md border p-0.5 md:p-1"
+                              >
+                                <Image
+                                  src={urlFor(product.image).url()}
+                                  alt="product image"
+                                  width={300}
+                                  height={300}
+                                  className="hoverEffect inline-block size-10 overflow-hidden object-cover group-hover:scale-105 md:h-14 md:w-full"
+                                />
+                              </Link>
+                            )}
+                            <h2 className="hidden text-sm md:inline-block">
+                              {product.name}
+                            </h2>
+                          </div>
+                          <div className="flex items-center justify-center">
+                            <PriceFormatter
+                              amount={product.price}
+                              className="truncate text-xs"
+                            />
+                          </div>
+                          <QuantityButtons
+                            product={product}
+                            className="mx-auto gap-1 text-base md:gap-1"
+                          />
+                          <div className="flex items-center justify-end md:justify-center">
+                            <PriceFormatter
+                              className="truncate text-xs"
+                              amount={
+                                product.price ? product.price * itemCount : 0
+                              }
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <Button
+                      onClick={handleResetCart}
+                      variant="destructive"
+                      className="m-5 font-semibold"
+                    >
+                      Resetuj Korpu
+                    </Button>
+                  </div>
+                </div>
                 <div className="col-span-1">
                   <div className="hidden w-full rounded-lg border bg-white p-6 md:inline-block">
                     <h2 className="mb-4 text-xl font-semibold">
@@ -106,7 +178,7 @@ const CartPage = () => {
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button className="w-full" size="lg">
-                              Nastavite sa kupovinom
+                              Naruči
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -124,79 +196,10 @@ const CartPage = () => {
                           href="/"
                           className="hoverEffect text-center text-sm text-primary hover:underline"
                         >
-                          Nastavi Kupovinu
+                          Dodaj jos proizvoda
                         </Link>
                       </div>
                     </div>
-                  </div>
-                </div>
-                <div className="lg:col-span-2">
-                  <div className="grid grid-cols-5 rounded-t-lg border bg-white p-2.5 text-base font-semibold md:grid-cols-6">
-                    <h2 className="col-span-2 ml-6 md:col-span-3">Proizvod</h2>
-                    <h2>Cena</h2>
-                    <h2>Kol.</h2>
-                    <h2>Ukupno</h2>
-                  </div>
-
-                  <div className="rounded-b-lg border border-t-0 bg-white">
-                    {groupedItems.map(({ product }) => {
-                      const itemCount = getItemCount(product._id);
-                      return (
-                        <div
-                          key={product._id}
-                          className="grid grid-cols-5 border-b p-2.5 last:border-b-0 md:grid-cols-6"
-                        >
-                          <div className="col-span-2 flex items-center md:col-span-3">
-                            <Trash2
-                              onClick={() => handleDeleteProduct(product._id)}
-                              className="hoverEffect mr-1 size-4 cursor-pointer text-gray-500 hover:text-red-600 md:size-5"
-                            />
-                            {product.image && (
-                              <Link
-                                href={`/product/${product.slug?.current}`}
-                                className="group mr-2 overflow-hidden rounded-md border p-0.5 md:p-1"
-                              >
-                                <Image
-                                  src={urlFor(product.image).url()}
-                                  alt="product image"
-                                  width={300}
-                                  height={300}
-                                  className="hoverEffect size-10 overflow-hidden object-cover group-hover:scale-105 md:h-14 md:w-full"
-                                />
-                              </Link>
-                            )}
-                            <h2 className="hidden text-sm md:inline-block">
-                              {product.name}
-                            </h2>
-                          </div>
-                          <div className="flex items-center">
-                            <PriceFormatter
-                              amount={product.price}
-                              className="truncate text-xs"
-                            />
-                          </div>
-                          <QuantityButtons
-                            product={product}
-                            className="gap-0 text-xs md:gap-1"
-                          />
-                          <div className="flex items-center">
-                            <PriceFormatter
-                              className="truncate text-xs"
-                              amount={
-                                product.price ? product.price * itemCount : 0
-                              }
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
-                    <Button
-                      onClick={handleResetCart}
-                      variant="destructive"
-                      className="m-5 font-semibold"
-                    >
-                      Resetuj Korpu
-                    </Button>
                   </div>
                 </div>
               </div>
@@ -224,7 +227,7 @@ const CartPage = () => {
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button className="w-full" size="lg">
-                          Nastavite sa kupovinom
+                          Naruči
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -240,7 +243,7 @@ const CartPage = () => {
                       href="/"
                       className="block text-center text-sm text-primary hover:underline"
                     >
-                      Nastavite sa kupovinom
+                      Dodaj jos proizvoda
                     </Link>
                   </div>
                 </div>

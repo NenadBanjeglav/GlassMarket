@@ -70,14 +70,50 @@ export const getAllCategories = async () => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createOrder(orderData: any) {
   try {
+    // Create the new order
     const newOrder = await backendClient.create({
       ...orderData,
     });
+
+    // Update product stock after creating the order
+    await updateProductStock(orderData.products);
 
     return { success: true, newOrder };
   } catch (error) {
     console.error("Error creating order:", error);
     return { success: false, error: "Failed to create order" };
+  }
+}
+
+export async function updateProductStock(
+  products: { product: { _ref: string }; quantity: number }[]
+) {
+  try {
+    const updatePromises = products.map(async (item) => {
+      const productId = item.product._ref;
+
+      // Fetch the current product stock
+      const query = `*[_type == "product" && _id == $productId][0] { stock }`;
+      const params = { productId };
+
+      const product = await backendClient.fetch(query, params);
+
+      if (product && product.stock !== undefined) {
+        const newStock = product.stock - item.quantity;
+
+        if (newStock < 0) {
+          throw new Error(`Not enough stock for product ID: ${productId}`);
+        }
+
+        // Update the product stock in Sanity
+        return backendClient.patch(productId).set({ stock: newStock }).commit();
+      }
+    });
+
+    await Promise.all(updatePromises);
+  } catch (error) {
+    console.error("Error updating product stock:", error);
+    throw new Error("Failed to update product stock");
   }
 }
 

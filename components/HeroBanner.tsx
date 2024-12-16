@@ -31,24 +31,24 @@ const HeroBanner = ({ heroes }: { heroes: HERO_QUERYResult }) => {
         {heroes.map((hero) => (
           <CarouselItem key={hero._id}>
             <Card>
-              <CardContent className="p-0">
-                <div className="flex h-[500px] flex-col items-center md:flex-row">
-                  <div className="flex flex-1 flex-col gap-2 p-6 md:gap-4 md:px-12">
+              <CardContent className="">
+                <div className="flex h-[400px]  flex-col items-center justify-center md:h-[500px] md:flex-row">
+                  <div className="flex flex-1 flex-col items-center gap-3 p-6 md:items-start md:gap-4 md:px-12">
                     <Badge
                       variant="secondary"
-                      className=" w-fit capitalize text-darkBlue"
+                      className=" w-fit uppercase text-darkBlue"
                     >
                       {hero.badge}
                     </Badge>
-                    <h2 className=" text-2xl font-bold tracking-tight  md:text-3xl lg:text-4xl">
+                    <h2 className=" text-center text-2xl font-bold  tracking-tight md:text-start md:text-3xl lg:text-4xl">
                       {hero.title}
                     </h2>
-                    <p className="mt-2 text-muted-foreground md:mt-4">
+                    <p className="mt-2 text-center text-muted-foreground md:mt-4 md:text-start">
                       {hero.description}
                     </p>
 
                     <Button
-                      className=" flex w-fit items-center justify-center rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors duration-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      className=" flex w-fit items-center justify-center rounded-lg bg-blue-600 px-6 py-4 font-semibold text-white transition-colors duration-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                       variant="default"
                       asChild
                     >
@@ -56,7 +56,7 @@ const HeroBanner = ({ heroes }: { heroes: HERO_QUERYResult }) => {
                     </Button>
                   </div>
                   {hero.image && (
-                    <div className="relative flex h-auto w-full items-center justify-center py-2 md:w-1/2">
+                    <div className="relative hidden h-auto w-full items-center justify-center py-2 md:flex md:w-1/2">
                       <Image
                         src={urlFor(hero.image).url()}
                         alt="Hero Image"

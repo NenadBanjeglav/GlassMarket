@@ -20,13 +20,13 @@ const ProductPage = async ({
     <div>
       <Container className="flex flex-col gap-10 py-10 md:flex-row">
         {product?.image && (
-          <div className="group h-[550px] w-full overflow-hidden rounded-md border border-darkBlue/20 shadow-md md:w-1/2">
+          <div className="group w-full overflow-hidden rounded-md border border-darkBlue/20 shadow-md md:w-1/2">
             <Image
               src={urlFor(product.image).url()}
               alt="product image"
               width={500}
               height={500}
-              className="hoverEffect max-h-[650px] w-full overflow-hidden rounded-md object-cover group-hover:scale-110"
+              className="hoverEffect max-h-[450px] w-full overflow-hidden rounded-md object-contain object-bottom group-hover:scale-110"
             />
           </div>
         )}
@@ -42,26 +42,26 @@ const ProductPage = async ({
 
           {product?.volume && (
             <div className="flex items-center justify-between">
-              <p className="text-xs text-gray-800">Zapremina:</p>
-              <p className="text-gray-500">{product?.volume}ml</p>
+              <p className="text-sm font-semibold text-gray-800">Zapremina:</p>
+              <p className="text-gray-500">{product?.volume} ml</p>
             </div>
           )}
           <div className="flex items-center justify-between">
-            <p className="text-xs text-gray-800">Visina:</p>
-            <p className="text-gray-500">{product?.height}mm</p>
+            <p className="text-sm font-semibold text-gray-800">Visina:</p>
+            <p className="text-gray-500">{product?.height} mm</p>
           </div>
           <div className="flex items-center justify-between">
-            <p className="text-xs text-gray-800">Sirina:</p>
-            <p className="text-gray-500">{product?.width}mm</p>
+            <p className="text-sm font-semibold text-gray-800">Širina:</p>
+            <p className="text-gray-500">{product?.width} mm</p>
           </div>
           <div className="flex items-center justify-between">
-            <p className="text-xs text-gray-800">Tezina:</p>
-            <p className="text-gray-500">{product?.weight}gr</p>
+            <p className="text-sm font-semibold text-gray-800">Težina:</p>
+            <p className="text-gray-500">{product?.weight} g</p>
           </div>
 
           {product?.stock && (
             <p className="w-24 rounded-lg bg-green-100 py-2.5 text-center text-sm font-semibold text-green-600">
-              Na Lageru
+              Na lageru
             </p>
           )}
 

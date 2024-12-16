@@ -20,6 +20,8 @@ interface Props {
   categories: Category[];
 }
 
+const ALL_OPTION = { _id: "all", title: "Sve", slug: { current: "" } };
+
 const CategorySelector = ({ categories }: Props) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
@@ -38,6 +40,8 @@ const CategorySelector = ({ categories }: Props) => {
     setOpen(false);
   };
 
+  const categoriesWithAllOption = [ALL_OPTION, ...categories];
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -48,7 +52,9 @@ const CategorySelector = ({ categories }: Props) => {
           className="w-[200px] justify-between"
         >
           {value
-            ? categories.find((category) => category?._id === value)?.title
+            ? categoriesWithAllOption.find(
+                (category) => category?._id === value
+              )?.title
             : "Filtriraj po kategoriji"}
           <ChevronsUpDown />
         </Button>
@@ -77,7 +83,7 @@ const CategorySelector = ({ categories }: Props) => {
           <CommandList>
             <CommandEmpty>Kategorija nije pronadjena.</CommandEmpty>
             <CommandGroup>
-              {categories.map((category) => (
+              {categoriesWithAllOption.map((category) => (
                 <CommandItem
                   className="cursor-pointer"
                   onSelect={() =>
