@@ -20,7 +20,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createOrder } from "@/sanity/helpers";
 import PriceFormatter from "./PriceFormatter";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -30,6 +31,7 @@ const formSchema = z.object({
   city: z.string().min(1, "City is required"),
   street: z.string().min(1, "Street name and number is required"),
   postalCode: z.string().min(1, "Postal code is required"),
+  deliveryMethod: z.enum(["store", "delivery"]).default("store"),
   companyName: z.string().optional(),
   pib: z.string().optional(),
   message: z.string().optional(),
@@ -47,7 +49,13 @@ const OrderForm = ({ user, orderItems }: Props) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { firstName, lastName, emailAddresses } = user;
-  const { getItemCount, getSubtotalPrice, getTotalPrice } = userCartStore();
+  const {
+    getItemCount,
+    getSubtotalPrice,
+    getTotalPrice,
+    getTotalWeight,
+    getDeliveryPrice,
+  } = userCartStore();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -59,11 +67,17 @@ const OrderForm = ({ user, orderItems }: Props) => {
       city: "",
       street: "",
       postalCode: "",
+      deliveryMethod: "store",
       companyName: "",
       pib: "",
       message: "",
       acceptTerms: false,
     },
+  });
+
+  const deliveryMethod = useWatch({
+    control: form.control,
+    name: "deliveryMethod",
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,7 +86,9 @@ const OrderForm = ({ user, orderItems }: Props) => {
 
     const orderNumber = crypto.randomUUID();
     const totalPrice = getTotalPrice();
-    const discountedPrice = getSubtotalPrice();
+    const deliveryPrice =
+      data.deliveryMethod === "delivery" ? getDeliveryPrice() : 0;
+    const discountedPrice = getSubtotalPrice().finalPrice + deliveryPrice;
     const amountDiscount = discountedPrice - totalPrice;
 
     const orderData = {
@@ -321,9 +337,38 @@ const OrderForm = ({ user, orderItems }: Props) => {
                     onCheckedChange={field.onChange}
                   />
                   <Label htmlFor="acceptTerms">
-                    Prihvatam uslove naručivanja
+                    Prihvatam uslove naručivanja{" "}
+                    <span className="text-red-500">*</span>
                   </Label>
                 </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="deliveryMethod"
+          render={({ field }) => (
+            <FormItem>
+              <Label htmlFor="deliveryMethod">
+                Način dostave <span className="text-red-500">*</span>
+              </Label>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="space-y-2"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="store" id="store" />
+                    <Label htmlFor="store">Preuzimanje u prodavnici</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="delivery" id="delivery" />
+                    <Label htmlFor="delivery">Dostava kurirskom službom</Label>
+                  </div>
+                </RadioGroup>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -335,45 +380,62 @@ const OrderForm = ({ user, orderItems }: Props) => {
         <h2 className=" text-lg font-semibold">Vaša porudžbina</h2>
 
         <div className="lg:col-span-2">
-          <div className="grid grid-cols-5 rounded-t-lg border bg-white p-2.5 text-base font-semibold md:grid-cols-6">
-            <h2 className="col-span-2 md:col-span-3">Proizvod</h2>
-            <h2>Cena</h2>
-            <h2 className="text-right">Količina</h2>
-            <h2 className="text-right">Ukupno</h2>
+          <div className="grid grid-cols-4 rounded-t-lg border bg-white p-2.5 text-base font-semibold md:grid-cols-6">
+            <h2 className="col-span-1 md:col-span-3">Proizvod</h2>
+            <h2 className=" text-center md:text-left">Cena</h2>
+            <h2 className="text-center ">Kol.</h2>
+            <h2 className=" text-center">Ukupno</h2>
           </div>
           <div className="rounded-b-lg border border-t-0 bg-white">
             {orderItems.map(({ product }) => {
               const itemCount = getItemCount(product._id);
+              const { discount, price } = product;
+              const discountedPrice =
+                discount && discount > 0
+                  ? price! - (discount * price!) / 100
+                  : price;
               return (
                 <div
                   key={product._id}
-                  className="grid grid-cols-5 border-b p-2.5 last:border-b-0 md:grid-cols-6"
+                  className="grid grid-cols-4 border-b p-2.5 last:border-b-0 md:grid-cols-6"
                 >
-                  <div className="col-span-2 flex items-center md:col-span-3">
+                  <div className="col-span-1 flex items-center md:col-span-3">
                     {product.image && (
                       <div className="group mr-2 overflow-hidden rounded-md border p-0.5 md:p-1">
                         <Image
                           src={urlFor(product.image).url()}
-                          alt="slika proizvoda"
+                          alt="product image"
                           width={300}
                           height={300}
-                          className="hoverEffect size-10 overflow-hidden object-cover group-hover:scale-105 md:h-14 md:w-full"
+                          className="hoverEffect inline-block size-10 overflow-hidden object-cover group-hover:scale-105 md:h-14 md:w-full"
                         />
                       </div>
                     )}
-                    <h2 className="text-sm">{product.name}</h2>
+                    <h2 className="hidden text-sm md:inline-block">
+                      {product.name}
+                    </h2>
                   </div>
-                  <div className="flex items-center">
-                    <PriceFormatter amount={product.price} />
+                  <div className="flex flex-col items-center justify-center">
+                    {discount! > 0 && (
+                      <PriceFormatter
+                        amount={price}
+                        className="truncate text-[8px] line-through"
+                      />
+                    )}
+                    <PriceFormatter
+                      amount={discountedPrice}
+                      className="truncate text-xs"
+                    />
                   </div>
                   <div className="flex items-center justify-center">
                     <p className="text-sm font-semibold text-darkText">
                       {itemCount}
                     </p>
                   </div>
-                  <div className="flex items-center justify-end">
+                  <div className="flex items-center justify-end md:justify-center">
                     <PriceFormatter
-                      amount={product.price ? product.price * itemCount : 0}
+                      className="truncate text-xs"
+                      amount={discountedPrice ? discountedPrice * itemCount : 0}
                     />
                   </div>
                 </div>
@@ -382,21 +444,65 @@ const OrderForm = ({ user, orderItems }: Props) => {
           </div>
           <div className="mt-5 w-full rounded-lg border bg-white p-6">
             <h2 className="mb-4 text-xl font-semibold">Rezime porudžbine</h2>
+
             <div className="w-full space-y-2">
+              <div className="flex place-items-center justify-between">
+                <span>Ukupna Težina:</span>
+                <span className="text-sm font-semibold text-darkText">
+                  {getTotalWeight() / 1000} kg
+                </span>
+              </div>
               <div className="flex items-center justify-between">
-                <span>Cena</span>
+                <span>Cena Robe</span>
                 <PriceFormatter amount={getTotalPrice()} />
               </div>
 
               <div className="flex place-items-center justify-between">
-                <span>Popust</span>
-                <PriceFormatter amount={getSubtotalPrice() - getTotalPrice()} />
+                <span>Akcijski Popust:</span>
+                <PriceFormatter
+                  amount={getSubtotalPrice().subtotal - getTotalPrice()}
+                />
               </div>
-              <Separator />
+
               <div className="flex place-items-center justify-between">
-                <span>Ukupno</span>
-                <PriceFormatter amount={getSubtotalPrice()} />
+                <span>Količinski Popust:</span>
+                <span className="text-sm font-semibold text-darkText">
+                  -
+                  <PriceFormatter
+                    amount={getSubtotalPrice().additionalDiscount}
+                  />
+                </span>
               </div>
+              {deliveryMethod === "delivery" && (
+                <>
+                  <div className="flex place-items-center justify-between">
+                    <span>Dostava:</span>
+                    <span className="text-sm font-semibold text-darkText">
+                      + <PriceFormatter amount={getDeliveryPrice()} />
+                    </span>
+                  </div>
+
+                  <Separator />
+
+                  <div className="flex place-items-center justify-between">
+                    <span>Ukupno</span>
+                    <PriceFormatter
+                      amount={
+                        getSubtotalPrice().finalPrice + getDeliveryPrice()
+                      }
+                    />
+                  </div>
+                </>
+              )}
+              {deliveryMethod !== "delivery" && (
+                <>
+                  <Separator />
+                  <div className="flex place-items-center justify-between">
+                    <span>Ukupno</span>
+                    <PriceFormatter amount={getSubtotalPrice().finalPrice} />
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

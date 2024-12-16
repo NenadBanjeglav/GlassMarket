@@ -10,15 +10,19 @@ interface Props {
 
 const PriceView = ({ product, className }: Props) => {
   const { price, discount } = product;
+
+  const discountedPrice =
+    discount && discount > 0 ? price! - (discount * price!) / 100 : price;
+
   return (
     <div className="flex items-center justify-between gap-5">
       <div className="flex items-center gap-2">
-        <PriceFormatter amount={price} className={className} />
+        <PriceFormatter amount={discountedPrice} className={className} />
 
         {discount! > 0 && (
           <PriceFormatter
-            amount={price! + (discount! * price!) / 100}
-            className={cn(`text-xs font-medium line-through`, className)}
+            amount={price}
+            className={cn("text-xs font-medium line-through", className)}
           />
         )}
       </div>

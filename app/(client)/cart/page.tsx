@@ -93,6 +93,11 @@ const CartPage = () => {
                   <div className="rounded-b-lg border border-t-0 bg-white">
                     {groupedItems.map(({ product }) => {
                       const itemCount = getItemCount(product._id);
+                      const { discount, price } = product;
+                      const discountedPrice =
+                        discount && discount > 0
+                          ? price! - (discount * price!) / 100
+                          : price;
                       return (
                         <div
                           key={product._id}
@@ -121,9 +126,15 @@ const CartPage = () => {
                               {product.name}
                             </h2>
                           </div>
-                          <div className="flex items-center justify-center">
+                          <div className="flex flex-col items-center justify-center">
+                            {discount! > 0 && (
+                              <PriceFormatter
+                                amount={price}
+                                className="truncate text-[8px] line-through"
+                              />
+                            )}
                             <PriceFormatter
-                              amount={product.price}
+                              amount={discountedPrice}
                               className="truncate text-xs"
                             />
                           </div>
@@ -135,7 +146,9 @@ const CartPage = () => {
                             <PriceFormatter
                               className="truncate text-xs"
                               amount={
-                                product.price ? product.price * itemCount : 0
+                                discountedPrice
+                                  ? discountedPrice * itemCount
+                                  : 0
                               }
                             />
                           </div>
@@ -163,15 +176,23 @@ const CartPage = () => {
                       </div>
 
                       <div className="flex place-items-center justify-between">
-                        <span>Popust</span>
+                        <span>Akcijski Popust:</span>
                         <PriceFormatter
-                          amount={getSubtotalPrice() - getTotalPrice()}
+                          amount={getSubtotalPrice().subtotal - getTotalPrice()}
+                        />
+                      </div>
+                      <div className="flex place-items-center justify-between">
+                        <span>Količinski Popust:</span>
+                        <PriceFormatter
+                          amount={getSubtotalPrice().additionalDiscount}
                         />
                       </div>
                       <Separator />
                       <div className="flex place-items-center justify-between">
                         <span>Ukupno</span>
-                        <PriceFormatter amount={getSubtotalPrice()} />
+                        <PriceFormatter
+                          amount={getSubtotalPrice().finalPrice}
+                        />
                       </div>
 
                       <div className="flex flex-col gap-2">
@@ -213,16 +234,22 @@ const CartPage = () => {
                       <span>Cena</span>
                       <PriceFormatter amount={getTotalPrice()} />
                     </div>
-                    <div className="flex justify-between">
-                      <span>Popust</span>
+                    <div className="flex place-items-center justify-between">
+                      <span>Akcijski Popust:</span>
                       <PriceFormatter
-                        amount={getSubtotalPrice() - getTotalPrice()}
+                        amount={getSubtotalPrice().subtotal - getTotalPrice()}
+                      />
+                    </div>
+                    <div className="flex place-items-center justify-between">
+                      <span>Količinski Popust:</span>
+                      <PriceFormatter
+                        amount={getSubtotalPrice().additionalDiscount}
                       />
                     </div>
                     <Separator />
-                    <div className="flex justify-between">
+                    <div className="flex place-items-center justify-between">
                       <span>Ukupno</span>
-                      <PriceFormatter amount={getSubtotalPrice()} />
+                      <PriceFormatter amount={getSubtotalPrice().finalPrice} />
                     </div>
                     <Dialog>
                       <DialogTrigger asChild>

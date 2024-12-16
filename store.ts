@@ -14,10 +14,16 @@ interface CartState {
   deleteCartProduct: (productId: string) => void;
   resetCart: () => void;
   getTotalPrice: () => number;
-  getSubtotalPrice: () => number;
+  getSubtotalPrice: () => {
+    subtotal: number;
+    additionalDiscount: number;
+    finalPrice: number;
+  };
   getItemCount: (productId: string) => number;
   getGroupedItems: () => CartItem[];
   setItemCount: (productId: string, quantity: number) => void;
+  getTotalWeight: () => number; // New method for total weight
+  getDeliveryPrice: () => number;
 }
 
 const userCartStore = create<CartState>()(
@@ -72,12 +78,32 @@ const userCartStore = create<CartState>()(
       },
 
       getSubtotalPrice: () => {
-        return get().items.reduce((total, item) => {
+        const subtotal = get().items.reduce((total, item) => {
           const price = item.product.price ?? 0;
           const discount = ((item.product.discount ?? 0) * price) / 100;
           const discountedPrice = price - discount;
           return total + discountedPrice * item.quantity;
         }, 0);
+
+        // Determine the additional discount percentage based on subtotal thresholds
+        let discountPercentage = 0;
+
+        if (subtotal > 200000) {
+          discountPercentage = 0.2; // 20% discount
+        } else if (subtotal > 125000) {
+          discountPercentage = 0.15; // 15% discount
+        } else if (subtotal > 50000) {
+          discountPercentage = 0.1; // 10% discount
+        }
+
+        const additionalDiscount = subtotal * discountPercentage;
+        const finalPrice = subtotal - additionalDiscount;
+
+        return {
+          subtotal,
+          additionalDiscount,
+          finalPrice,
+        };
       },
 
       getItemCount: (productId) => {
@@ -96,6 +122,33 @@ const userCartStore = create<CartState>()(
                 )
               : state.items.filter((item) => item.product._id !== productId),
         })),
+      getTotalWeight: () => {
+        return get().items.reduce(
+          (totalWeight, item) =>
+            totalWeight + (item.product.weight ?? 0) * item.quantity,
+          0
+        );
+      },
+      getDeliveryPrice: () => {
+        const weightKg = get().getTotalWeight() / 1000;
+
+        if (weightKg >= 230 && weightKg <= 480) {
+          return 8300;
+        }
+
+        if (weightKg <= 5) return 700;
+        if (weightKg <= 10) return 800;
+        if (weightKg <= 20) return 1000;
+        if (weightKg <= 30) return 1200;
+        if (weightKg <= 50) return 2000;
+
+        // For weights over 50 kg: 2000 RSD + 35 RSD per additional kg over 50 kg
+        const basePrice = 2000;
+        const extraWeight = weightKg - 50;
+        const additionalCost = extraWeight * 35;
+
+        return basePrice + additionalCost;
+      },
     }),
 
     { name: "cart-store" }

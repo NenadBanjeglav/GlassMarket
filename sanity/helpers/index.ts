@@ -70,13 +70,13 @@ export const getAllCategories = async () => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createOrder(orderData: any) {
   try {
-    // Create the new order
+    // Update product stock first
+    await updateProductStock(orderData.products);
+
+    // Create the new order only after the stock update is successful
     const newOrder = await backendClient.create({
       ...orderData,
     });
-
-    // Update product stock after creating the order
-    await updateProductStock(orderData.products);
 
     return { success: true, newOrder };
   } catch (error) {
