@@ -117,6 +117,7 @@ const OrderForm = ({ user, orderItems }: Props) => {
       amountDiscount,
       createdAt: new Date().toISOString(),
       status: "confirmed",
+      deliveryMethod: data.deliveryMethod,
     };
 
     try {
@@ -124,7 +125,9 @@ const OrderForm = ({ user, orderItems }: Props) => {
 
       if (result.success) {
         toast.success("Porudžbina je uspešno kreirana!");
-        router.push(`/success?orderNumber=${orderNumber}`);
+        router.push(
+          `/success?orderNumber=${orderNumber}&deliveryMethod=${deliveryMethod}`
+        );
       } else {
         throw new Error(result.error);
       }

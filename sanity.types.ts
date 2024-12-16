@@ -82,6 +82,7 @@ export type Order = {
   city?: string;
   street?: string;
   postalCode?: string;
+  deliveryMethod?: "store" | "delivery";
   companyName?: string;
   pib?: string;
   message?: string;
@@ -438,7 +439,7 @@ export type CATEGORIES_QUERYResult = Array<{
   }>;
 }>;
 // Variable: MY_ORDERS_QUERY
-// Query: *[      _type == "order" && clerkUserId == $userId  ] | order(orderDate desc) {      ...,      products[]{          ...,          product->      }  }
+// Query: *[      _type == "order" && clerkUserId == $userId  ] | order(orderDate asc) {      ...,      products[]{          ...,          product->      }  }
 export type MY_ORDERS_QUERYResult = Array<{
   _id: string;
   _type: "order";
@@ -453,6 +454,7 @@ export type MY_ORDERS_QUERYResult = Array<{
   city?: string;
   street?: string;
   postalCode?: string;
+  deliveryMethod?: "delivery" | "store";
   companyName?: string;
   pib?: string;
   message?: string;
@@ -519,6 +521,6 @@ declare module "@sanity/client" {
     "*[_type == \"product\" && slug.current == $slug] | order(name asc)[0] {\n    ...,\n    \"relatedCaps\": relatedCap[]->{\n      ...\n    }\n  }": PRODUCT_BY_SLUGResult;
     "*[_type == \"product\" && references(*[_type == \"category\" && slug.current == $categorySlug]._id)] | order(name asc)": PRODUCT_BY_CATEGORY_QUERYResult;
     "*[_type == \"category\"] | order(name asc)": CATEGORIES_QUERYResult;
-    "\n  *[\n      _type == \"order\" && clerkUserId == $userId\n  ] | order(orderDate desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": MY_ORDERS_QUERYResult;
+    "\n  *[\n      _type == \"order\" && clerkUserId == $userId\n  ] | order(orderDate asc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": MY_ORDERS_QUERYResult;
   }
 }

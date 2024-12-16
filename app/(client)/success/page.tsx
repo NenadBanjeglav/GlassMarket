@@ -10,6 +10,7 @@ import Link from "next/link";
 const SuccessPage = () => {
   const searchParams = useSearchParams();
   const orderNumber = searchParams.get("orderNumber");
+  const deliveryMethod = searchParams.get("deliveryMethod");
   const { resetCart } = userCartStore();
 
   useEffect(() => {
@@ -38,10 +39,12 @@ const SuccessPage = () => {
           Porudžbina je potvrđena
         </h1>
         <div className="mb-8 space-y-4 text-center text-gray-600">
+          <p>Hvala vam na kupovini!</p>
           <p>
-            Hvala vam na kupovini. Vaša porudžbina je u procesu obrade i uskoro
-            će biti poslata. Potvrda porudžbine sa detaljima biće poslata na
-            vašu e-poštu.
+            {deliveryMethod === "store" &&
+              "Vaša porudžbina je u procesu obrade i uskoro će biti spremna za preuzimanje u našoj prodavnici."}
+            {deliveryMethod === "delivery" &&
+              "Vaša porudžbina je u procesu obrade i uskoro će biti poslata."}
           </p>
           <p>
             Broj porudžbine: <br />
@@ -51,9 +54,17 @@ const SuccessPage = () => {
         <div className="mb-8 rounded-lg border border-gray-200 bg-green-50 p-4">
           <h2 className="mb-2 font-semibold text-green-800">Šta sledi?</h2>
           <ul className="space-y-1 text-sm text-green-700">
-            <li>Proverite svoju e-poštu za potvrdu porudžbine</li>
-            <li>Obavestićemo vas kada vaša porudžbina bude poslata</li>
-            <li>Pratite status vaše porudžbine u bilo kom trenutku</li>
+            {deliveryMethod === "delivery" && (
+              <li>Obavestićemo vas kada vaša porudžbina bude poslata.</li>
+            )}
+
+            {deliveryMethod === "store" && (
+              <li>
+                Obavestićemo vas kada vaša porudžbina bude spremna za
+                preuzimanje.
+              </li>
+            )}
+            <li>Pratite status vaše porudžbine na našem sajtu.</li>
           </ul>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

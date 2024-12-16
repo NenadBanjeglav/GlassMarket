@@ -49,7 +49,7 @@ const CategorySelector = ({ categories }: Props) => {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-full justify-between md:w-[200px]"
         >
           {value
             ? categoriesWithAllOption.find(
@@ -59,7 +59,7 @@ const CategorySelector = ({ categories }: Props) => {
           <ChevronsUpDown />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0 ">
+      <PopoverContent className="w-full p-0 md:w-[200px] ">
         <Command>
           <CommandInput
             placeholder="Trazi kategoriju..."

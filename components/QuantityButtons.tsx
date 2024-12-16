@@ -19,21 +19,41 @@ const QuantityButtons = ({ product, className }: Props) => {
   const [inputCount, setInputCount] = useState(
     getItemCount(product._id).toString()
   );
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     setInputCount(getItemCount(product._id).toString());
   }, [getItemCount(product._id)]);
 
-  const handleRemoveProduct = () => {
-    removeItem(product._id);
-    setInputCount(getItemCount(product._id).toString());
-    toast.success(`${product.name}... izbačen iz korpe!`);
-  };
+  const handleUpdateProduct = (action: "add" | "remove") => {
+    setIsUpdating(true);
+    const currentCount = parseInt(inputCount, 10) || 0;
+    const newCount = action === "add" ? currentCount + 1 : currentCount - 1;
 
-  const handleAddProduct = () => {
-    addItem(product);
-    setInputCount(getItemCount(product._id).toString());
-    toast.success(`${product.name}... dodat u korpu!`);
+    // Check if the new count is within the available stock
+    if (newCount > product.stock!) {
+      toast.error(`Maksimalna dostupna količina je ${product.stock}.`);
+      setIsUpdating(false);
+      return;
+    }
+
+    // Ensure the count is not negative
+    if (newCount < 0) {
+      setIsUpdating(false);
+      return;
+    }
+
+    setInputCount(newCount.toString());
+
+    if (action === "add") {
+      addItem(product);
+      toast.success(`${product.name}... dodat u korpu!`);
+    } else {
+      removeItem(product._id);
+      toast.success(`${product.name}... izbačen iz korpe!`);
+    }
+
+    setIsUpdating(false);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,8 +65,15 @@ const QuantityButtons = ({ product, className }: Props) => {
 
   const handleInputBlur = () => {
     const count = inputCount === "" ? 0 : parseInt(inputCount, 10);
+
+    if (count > product.stock!) {
+      toast.error(`Maksimalna dostupna količina je ${product.stock}.`);
+      setInputCount(product.stock!.toString()); // Set to the highest possible stock value
+      setItemCount(product._id, product.stock!);
+      return;
+    }
+
     setItemCount(product._id, count);
-    setInputCount(getItemCount(product._id).toString());
   };
 
   // const itemCount = getItemCount(product._id);
@@ -57,7 +84,8 @@ const QuantityButtons = ({ product, className }: Props) => {
         variant="outline"
         size="icon"
         className="size-5"
-        onClick={handleRemoveProduct}
+        onClick={() => handleUpdateProduct("remove")}
+        disabled={isUpdating}
       >
         <Minus />
       </Button>
@@ -67,12 +95,14 @@ const QuantityButtons = ({ product, className }: Props) => {
         onChange={handleInputChange}
         onBlur={handleInputBlur}
         className="w-8 rounded-md border text-center font-semibold text-darkBlue"
+        disabled={isUpdating}
       />
       <Button
         variant="outline"
         size="icon"
         className="size-5"
-        onClick={handleAddProduct}
+        onClick={() => handleUpdateProduct("add")}
+        disabled={isUpdating}
       >
         <Plus />
       </Button>

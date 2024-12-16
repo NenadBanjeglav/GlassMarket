@@ -416,6 +416,23 @@
         },
         "optional": true
       },
+      "deliveryMethod": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "store"
+            },
+            {
+              "type": "string",
+              "value": "delivery"
+            }
+          ]
+        },
+        "optional": true
+      },
       "companyName": {
         "type": "objectAttribute",
         "value": {

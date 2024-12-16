@@ -57,7 +57,7 @@ const Header = async () => {
               <div className="hoverEffect  flex items-center gap-1 rounded-md border border-gray-200 px-2 py-1 shadow-md hover:shadow-none">
                 <SignInButton mode="modal">
                   <div className="flex gap-1">
-                    <User className="size-5 text-darkBlue md:size-6" />
+                    <User className=" size-6 text-darkBlue" />
                     <span className="hidden text-base font-semibold md:inline-block">
                       Prijavi se
                     </span>

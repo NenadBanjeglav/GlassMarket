@@ -13,7 +13,11 @@ export const HERO_QUERY = defineQuery(`
 // `);
 
 export const ALL_PRODUCT_QUERY = defineQuery(`
-  *[_type == "product" && (!defined($categorySlug) || $categorySlug in categories[]->slug.current)] | order(name asc)
+  *[
+    _type == "product" &&
+    (!defined($categorySlug) || $categorySlug in categories[]->slug.current) &&
+    (!defined($volumeSlug) || volume <= $volumeSlug)
+  ] | order(name asc)
 `);
 
 export const PRODUCT_BY_SLUG = defineQuery(
@@ -36,7 +40,7 @@ export const CATEGORIES_QUERY = defineQuery(
 export const MY_ORDERS_QUERY = defineQuery(`
   *[
       _type == "order" && clerkUserId == $userId
-  ] | order(orderDate desc) {
+  ] | order(orderDate asc) {
       ...,
       products[]{
           ...,

@@ -1,8 +1,9 @@
 import { Category, Product } from "@/sanity.types";
 import React from "react";
 import Container from "./Container";
-import Categories from "./Categories";
 import ProductGrid from "./ProductGrid";
+import VolumeSelector from "./VolumeSelector";
+import CategorySelector from "./CategorySelector";
 
 interface Props {
   products: Product[];
@@ -27,7 +28,10 @@ const ProductsList = ({ products, title, categories }: Props) => {
             </p>
           </div>
         )}
-        {categories && <Categories categories={categories} />}
+        <div className="mb-4 flex flex-col items-center gap-2 md:flex-row">
+          {categories && <CategorySelector categories={categories} />}
+          <VolumeSelector />
+        </div>
         <ProductGrid products={products} />
       </Container>
     </div>

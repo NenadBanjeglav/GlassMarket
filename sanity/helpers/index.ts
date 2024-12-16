@@ -24,12 +24,16 @@ export const getHero = async () => {
 };
 
 export const getAllProducts = async (
-  categorySlug?: string
+  categorySlug?: string,
+  volumeSlug?: number
 ): Promise<Product[]> => {
   try {
     const result = await sanityFetch({
       query: ALL_PRODUCT_QUERY,
-      params: { categorySlug: categorySlug || null },
+      params: {
+        categorySlug: categorySlug || null,
+        volumeSlug: volumeSlug || null,
+      },
     });
 
     // Ensure the function returns an array of products
