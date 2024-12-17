@@ -30,7 +30,6 @@ const Header = async () => {
         <Link href="/">
           <Image src="/logo.jpg" alt="logo" width={70} height={40} priority />
         </Link>
-        {/* <Search /> */}
         <div className="flex items-center gap-5">
           <CartIcon />
           <ClerkLoaded>

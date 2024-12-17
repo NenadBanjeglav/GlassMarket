@@ -32,6 +32,7 @@ const ProductsList = ({ products, title, categories }: Props) => {
           {categories && <CategorySelector categories={categories} />}
           <VolumeSelector />
         </div>
+
         <ProductGrid products={products} />
       </Container>
     </div>

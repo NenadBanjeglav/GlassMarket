@@ -1,7 +1,7 @@
 import AddToCartButton from "@/components/AddToCartButton";
 import Container from "@/components/Container";
 import PriceView from "@/components/PriceView";
-import ProductsList from "@/components/ProductList";
+import ProductGrid from "@/components/ProductGrid";
 import { Separator } from "@/components/ui/separator";
 import { getProductBySlug } from "@/sanity/helpers";
 import { urlFor } from "@/sanity/lib/image";
@@ -105,7 +105,7 @@ const ProductPage = async ({
                 Povezani <span className="text-lightBlue">Proizvodi </span>:
               </h2>
             </div>
-            <ProductsList products={product.relatedCaps} />
+            <ProductGrid products={product.relatedCaps} />
           </section>
         </Container>
       )}

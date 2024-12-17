@@ -17,15 +17,15 @@ export const ALL_PRODUCT_QUERY = defineQuery(`
     _type == "product" &&
     (!defined($categorySlug) || $categorySlug in categories[]->slug.current) &&
     (!defined($volumeSlug) || volume <= $volumeSlug)
-  ] | order(name asc)
+  ] | order(volume desc)
 `);
 
 export const PRODUCT_BY_SLUG = defineQuery(
   `*[_type == "product" && slug.current == $slug] | order(name asc)[0] {
     ...,
-    "relatedCaps": relatedCap[]->{
-      ...
-    }
+    "relatedCaps": relatedCaps[]->{
+  ...
+}
   }`
 );
 

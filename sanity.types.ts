@@ -285,7 +285,7 @@ export type HERO_QUERYResult = Array<{
   isActive?: boolean;
 }>;
 // Variable: ALL_PRODUCT_QUERY
-// Query: *[_type == "product" && (!defined($categorySlug) || $categorySlug in categories[]->slug.current)] | order(name asc)
+// Query: *[    _type == "product" &&    (!defined($categorySlug) || $categorySlug in categories[]->slug.current) &&    (!defined($volumeSlug) || volume <= $volumeSlug)  ] | order(volume desc)
 export type ALL_PRODUCT_QUERYResult = Array<{
   _id: string;
   _type: "product";
@@ -517,7 +517,7 @@ import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     "\n    *[_type == \"hero\"] | order(name asc)\n    ": HERO_QUERYResult;
-    "\n  *[_type == \"product\" && (!defined($categorySlug) || $categorySlug in categories[]->slug.current)] | order(name asc)\n": ALL_PRODUCT_QUERYResult;
+    "\n  *[\n    _type == \"product\" &&\n    (!defined($categorySlug) || $categorySlug in categories[]->slug.current) &&\n    (!defined($volumeSlug) || volume <= $volumeSlug)\n  ] | order(volume desc)\n": ALL_PRODUCT_QUERYResult;
     "*[_type == \"product\" && slug.current == $slug] | order(name asc)[0] {\n    ...,\n    \"relatedCaps\": relatedCap[]->{\n      ...\n    }\n  }": PRODUCT_BY_SLUGResult;
     "*[_type == \"product\" && references(*[_type == \"category\" && slug.current == $categorySlug]._id)] | order(name asc)": PRODUCT_BY_CATEGORY_QUERYResult;
     "*[_type == \"category\"] | order(name asc)": CATEGORIES_QUERYResult;
