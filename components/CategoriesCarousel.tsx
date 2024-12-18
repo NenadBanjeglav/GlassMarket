@@ -32,7 +32,7 @@ const CategoriesCarousel = ({ categories }: Props) => {
           UVOZ I PRODAJA{" "}
           <span className="text-lightBlue">STAKLENE AMBALAŽE</span>
         </h2>
-        <p className="text-center text-sm font-thin text-gray-500">
+        <p className="text-center text-gray-500">
           U našoj ponudi možete pronaći širok spektar ambalažnih rešenja,
           uključujući različite modele boca i tegli, kao i raznovrsne vrste
           zatvarača: čepove, poklopce i PVC kapice. Naš asortiman je pažljivo

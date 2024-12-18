@@ -1,38 +1,90 @@
 import CategoriesCarousel from "@/components/CategoriesCarousel";
 import HeroBanner from "@/components/HeroBanner";
-import ProductsList from "@/components/ProductList";
-import { getAllCategories, getAllProducts, getHero } from "@/sanity/helpers";
+import ProductCarousel from "@/components/ProductCarousel";
 
-interface SearchParams {
-  category?: string;
-  volume?: string; // Volume is received as a string from URL params
-}
+import {
+  getAllCategories,
+  getHero,
+  getProductsNew,
+  getProductsOnSale,
+} from "@/sanity/helpers";
+import Image from "next/image";
+import razdelnikLogo from "@/public/glass-market-rezdelnik.png";
+import Container from "@/components/Container";
 
-export default async function Home(params: {
-  searchParams?: Promise<SearchParams>;
-}) {
-  const searchParams = await params.searchParams;
-  const categorySlug = searchParams?.category;
-  const volumeSlug = searchParams?.volume
-    ? parseInt(searchParams.volume)
-    : undefined;
+// interface SearchParams {
+//   category?: string;
+//   volume?: string; // Volume is received as a string from URL params
+// }
+
+export default async function Home() {
+  // const searchParams = await params.searchParams;
+  // // const categorySlug = searchParams?.category;
+  // // const volumeSlug = searchParams?.volume
+  // //   ? parseInt(searchParams.volume)
+  // //   : undefined;
 
   const heroes = await getHero();
 
-  const products = await getAllProducts(categorySlug, volumeSlug);
+  const productsSale = await getProductsOnSale();
   const categories = await getAllCategories();
+  const productsNew = await getProductsNew();
 
   return (
     <div>
       <HeroBanner heroes={heroes} />
       <CategoriesCarousel categories={categories} />
-      <section id="products">
+      {productsSale.length > 0 && (
+        <section>
+          <Container>
+            <div className="flex items-center justify-center">
+              <Image src={razdelnikLogo} alt="logo" width={150} height={80} />
+            </div>
+            <div className="py-10">
+              <h2 className="text-center text-2xl font-semibold uppercase text-gray-600">
+                Proizvodi na <span className="text-red-500">AKCIJI</span> – Ne
+                Propustite Najbolje Ponude!
+              </h2>
+              <p className="text-center text-gray-500">
+                Istražite našu pažljivo odabranu ponudu proizvoda na akciji.
+                Iskoristite specijalne popuste i nabavite omiljene proizvode po
+                sniženim cenama. Ponuda traje dok traju zalihe!
+              </p>
+            </div>
+            <ProductCarousel products={productsSale} />
+          </Container>
+        </section>
+      )}
+      {productsNew.length > 0 && (
+        <section>
+          <Container>
+            <div className="flex items-center justify-center">
+              <Image src={razdelnikLogo} alt="logo" width={150} height={80} />
+            </div>
+            <div className="py-10">
+              <h2 className="text-center text-2xl font-semibold uppercase text-gray-600">
+                <span className="text-red-500">Najnoviji</span> Proizvodi –
+                Istražite Naše Novitete!
+              </h2>
+              <p className="text-center text-gray-500">
+                Otkrijte našu najnoviju ponudu proizvoda. Uvek pratimo trendove
+                i dodajemo nove artikle koji će unaprediti vašu ponudu. Budite
+                prvi koji će isprobati naše najnovije proizvode i osigurajte ih
+                dok su još dostupni!
+              </p>
+            </div>
+            <ProductCarousel products={productsNew} />
+          </Container>
+        </section>
+      )}
+
+      {/* <section id="products">
         <ProductsList
           products={products}
           title={true}
           categories={categories}
         />
-      </section>
+      </section> */}
     </div>
   );
 }

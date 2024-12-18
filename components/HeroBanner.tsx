@@ -40,10 +40,10 @@ const HeroBanner = ({ heroes }: { heroes: HERO_QUERYResult }) => {
                     >
                       {hero.badge}
                     </Badge>
-                    <h2 className=" text-center text-2xl font-bold  tracking-tight md:text-start md:text-3xl lg:text-4xl">
+                    <h2 className=" text-center text-2xl font-bold  tracking-tight text-gray-600 md:text-start md:text-3xl lg:text-4xl">
                       {hero.title}
                     </h2>
-                    <p className="mt-2 text-center text-muted-foreground md:mt-4 md:text-start">
+                    <p className="mt-2 text-center text-gray-500 md:mt-4 md:text-start">
                       {hero.description}
                     </p>
 

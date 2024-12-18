@@ -29,6 +29,24 @@ export const PRODUCT_BY_SLUG = defineQuery(
   }`
 );
 
+export const PRODUCTS_ON_SALE = defineQuery(
+  `*[_type == "product" && status == "AKCIJA"] | order(name asc) {
+    ...,
+    "relatedCaps": relatedCaps[]->{
+      ...
+    }
+  }`
+);
+
+export const PRODUCTS_NEW = defineQuery(
+  `*[_type == "product" && status == "NOVO"] | order(name asc) {
+    ...,
+    "relatedCaps": relatedCaps[]->{
+      ...
+    }
+  }`
+);
+
 export const PRODUCT_BY_CATEGORY_QUERY = defineQuery(
   `*[_type == "product" && references(*[_type == "category" && slug.current == $categorySlug]._id)] | order(name asc)`
 );
@@ -40,7 +58,7 @@ export const CATEGORIES_QUERY = defineQuery(
 export const MY_ORDERS_QUERY = defineQuery(`
   *[
       _type == "order" && clerkUserId == $userId
-  ] | order(orderDate asc) {
+  ] | order(_createdAt desc) {
       ...,
       products[]{
           ...,

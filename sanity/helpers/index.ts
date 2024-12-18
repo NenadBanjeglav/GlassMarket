@@ -10,6 +10,8 @@ import {
   MY_ORDERS_QUERY,
   PRODUCT_BY_CATEGORY_QUERY,
   PRODUCT_BY_SLUG,
+  PRODUCTS_NEW,
+  PRODUCTS_ON_SALE,
 } from "./queries";
 
 export const getHero = async () => {
@@ -41,6 +43,30 @@ export const getAllProducts = async (
     return result.data || [];
   } catch (error) {
     console.error(`Error fetching Products data:`, error);
+    return [];
+  }
+};
+
+export const getProductsOnSale = async () => {
+  try {
+    const products = await sanityFetch({
+      query: PRODUCTS_ON_SALE,
+    });
+    return products.data || [];
+  } catch (error) {
+    console.error("Error fetching products on sale:", error);
+    return [];
+  }
+};
+
+export const getProductsNew = async () => {
+  try {
+    const products = await sanityFetch({
+      query: PRODUCTS_NEW,
+    });
+    return products.data || [];
+  } catch (error) {
+    console.error("Error fetching new products:", error);
     return [];
   }
 };

@@ -22,6 +22,7 @@ import { createOrder } from "@/sanity/helpers";
 import PriceFormatter from "./PriceFormatter";
 import { useForm, useWatch } from "react-hook-form";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { Loader } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -510,8 +511,8 @@ const OrderForm = ({ user, orderItems }: Props) => {
           </div>
         </div>
 
-        <Button type="submit" disabled={loading}>
-          {loading ? "Obrada..." : "Poruči"}
+        <Button type="submit" disabled={loading} className="w-20">
+          {loading ? <Loader className="animate-spin" /> : "Poruči"}
         </Button>
       </form>
     </Form>
