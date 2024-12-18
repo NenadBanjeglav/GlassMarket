@@ -5,7 +5,6 @@ import React from "react";
 
 import Container from "./Container";
 import Image from "next/image";
-import razdelnikLogo from "@/public/glass-market-rezdelnik.png";
 import { urlFor } from "@/sanity/lib/image";
 import Link from "next/link";
 import {
@@ -24,9 +23,6 @@ interface Props {
 const CategoriesCarousel = ({ categories }: Props) => {
   return (
     <Container>
-      <div className="flex items-center justify-center">
-        <Image src={razdelnikLogo} alt="logo" width={150} height={80} />
-      </div>
       <div className="py-10">
         <h2 className="text-center text-2xl font-semibold text-gray-600">
           UVOZ I PRODAJA{" "}

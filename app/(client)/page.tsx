@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import razdelnikLogo from "@/public/glass-market-rezdelnik.png";
 import Container from "@/components/Container";
+import FeaturesBanner from "@/components/FeaturesBanner";
 
 // interface SearchParams {
 //   category?: string;
@@ -33,7 +34,9 @@ export default async function Home() {
   return (
     <div>
       <HeroBanner heroes={heroes} />
+      <FeaturesBanner />
       <CategoriesCarousel categories={categories} />
+
       {productsSale.length > 0 && (
         <section>
           <Container>
@@ -42,7 +45,7 @@ export default async function Home() {
             </div>
             <div className="py-10">
               <h2 className="text-center text-2xl font-semibold uppercase text-gray-600">
-                Proizvodi na <span className="text-red-500">AKCIJI</span> – Ne
+                Proizvodi na <span className="text-red-700">AKCIJI</span> – Ne
                 Propustite Najbolje Ponude!
               </h2>
               <p className="text-center text-gray-500">
@@ -55,6 +58,7 @@ export default async function Home() {
           </Container>
         </section>
       )}
+
       {productsNew.length > 0 && (
         <section>
           <Container>
@@ -63,7 +67,7 @@ export default async function Home() {
             </div>
             <div className="py-10">
               <h2 className="text-center text-2xl font-semibold uppercase text-gray-600">
-                <span className="text-red-500">Najnoviji</span> Proizvodi –
+                <span className="text-red-700">Najnoviji</span> Proizvodi –
                 Istražite Naše Novitete!
               </h2>
               <p className="text-center text-gray-500">
