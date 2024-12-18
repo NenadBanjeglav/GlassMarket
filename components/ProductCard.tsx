@@ -41,12 +41,12 @@ const ProductCard = ({ product }: Props) => {
           </div>
         )}
       </div>
-      <div className="flex flex-col gap-2 p-5">
+      <div className="flex h-full flex-col gap-2 p-5">
         <p className="line-clamp-1 text-base font-semibold capitalize tracking-wide text-gray-600">
           {product.name}
           <br />
         </p>
-        <span className="text-sm text-muted-foreground">
+        <span className="line-clamp-1 text-sm text-gray-500">
           {product.description}
         </span>
 
