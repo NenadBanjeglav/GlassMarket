@@ -10,7 +10,11 @@ interface SearchParams {
   volume?: string; // Volume is received as a string from URL params
 }
 
-const StorePage = async ({ searchParams }: { searchParams: SearchParams }) => {
+const StorePage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) => {
   const params = await searchParams;
   const categorySlug = params?.category;
   const volumeSlug = params?.volume ? parseInt(params.volume || "") : undefined;
