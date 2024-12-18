@@ -22,20 +22,13 @@ interface Props {
 
 const CategoriesCarousel = ({ categories }: Props) => {
   return (
-    <Container>
-      <div className="py-10">
-        <h2 className="text-center text-2xl font-semibold text-gray-600">
-          UVOZ I PRODAJA{" "}
-          <span className="text-lightBlue">STAKLENE AMBALAŽE</span>
-        </h2>
-        <p className="text-center text-gray-500">
-          U našoj ponudi možete pronaći širok spektar ambalažnih rešenja,
-          uključujući različite modele boca i tegli, kao i raznovrsne vrste
-          zatvarača: čepove, poklopce i PVC kapice. Naš asortiman je pažljivo
-          osmišljen kako bi omogućio optimalno zatvaranje i pakovanje odabrane
-          ambalaže, u skladu sa vašim specifičnim potrebama.
-        </p>
-      </div>
+    <Container className="py-16">
+      <h2 className="text-center text-2xl font-semibold uppercase text-gray-600 md:text-left">
+        Istražite <span className="text-lightBlue">Kategorije</span>
+      </h2>
+      <p className="text-center text-gray-500 md:text-left">
+        Otkrijte širok asortiman proizvoda po kategorijama.
+      </p>
       <Carousel
         className="relative mx-auto mb-10 w-full max-w-7xl md:my-10"
         plugins={[

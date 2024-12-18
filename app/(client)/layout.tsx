@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import localFont from "next/font/local";
-import Header from "@/components/Header";
+
 import { ClerkProvider } from "@clerk/nextjs";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import AdressBanner from "@/components/AdressBanner";
+import { RoundedDrawerNavExample } from "@/components/HeaderNew";
+import { getAllCategories, getUserOrders } from "@/sanity/helpers";
+import { currentUser } from "@clerk/nextjs/server";
 
 const poppins = localFont({
   src: "../font/Poppins.woff2",
@@ -56,17 +59,27 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const categories = await getAllCategories();
+  const user = await currentUser();
+
+  let orders;
+
+  if (user?.id) {
+    orders = await getUserOrders(user.id);
+  }
   return (
     <ClerkProvider dynamic>
       <html lang="sr-Latn">
         <body className={`${poppins.variable} antialiased`}>
           <AdressBanner />
-          <Header />
+          <RoundedDrawerNavExample categories={categories} orders={orders} />
+          {/* <Header /> */}
+
           {children}
           <Footer />
           <Toaster />

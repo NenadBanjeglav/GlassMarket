@@ -30,7 +30,7 @@ const Footer = async () => {
           <ul className="mt-4 flex flex-col items-center space-y-2 md:items-start">
             <li>
               <Link href={`/store`} className=" hoverEffect hover:text-red-700">
-                Sve
+                Svi Proizvodi
               </Link>
             </li>
             {categories.map((cat) => (

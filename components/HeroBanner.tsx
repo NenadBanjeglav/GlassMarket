@@ -20,7 +20,7 @@ import Autoplay from "embla-carousel-autoplay";
 const HeroBanner = ({ heroes }: { heroes: HERO_QUERYResult }) => {
   return (
     <Carousel
-      className="relative mx-auto mb-10 w-full  max-w-screen-xl md:my-10"
+      className="relative mx-auto mb-10 w-full  max-w-screen-xl"
       plugins={[
         Autoplay({
           delay: 3000,
@@ -31,7 +31,7 @@ const HeroBanner = ({ heroes }: { heroes: HERO_QUERYResult }) => {
         {heroes.map((hero) => (
           <CarouselItem key={hero._id}>
             <Card>
-              <CardContent className="">
+              <CardContent className="overflow-hidden">
                 <div className="flex h-1/2  flex-col items-center justify-center md:h-[500px] md:flex-row">
                   <div className="flex flex-1 flex-col items-center gap-3 p-6 md:items-start md:gap-4 md:px-12">
                     <Badge
@@ -52,7 +52,7 @@ const HeroBanner = ({ heroes }: { heroes: HERO_QUERYResult }) => {
                       variant="default"
                       asChild
                     >
-                      <Link href={`#products`}>Započni Kupovinu</Link>
+                      <Link href={`/store`}>Započni Kupovinu</Link>
                     </Button>
                   </div>
                   {hero.image && (

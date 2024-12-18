@@ -20,7 +20,7 @@ const CategoryPage = async ({ params }: Props) => {
     <div className="flex flex-col items-center bg-gray-100">
       <Container className="mt-3 w-full rounded-lg bg-white p-8 shadow-md">
         <div className="pb-10">
-          <h2 className="text-center text-2xl font-semibold text-gray-600">
+          <h2 className="text-center text-2xl font-semibold uppercase text-gray-600">
             Naša ponuda u kategoriji{" "}
             <span className="text-lightBlue">
               {slug
@@ -29,9 +29,7 @@ const CategoryPage = async ({ params }: Props) => {
                 .join(" ")}
             </span>
           </h2>
-          <p className="text-center text-sm font-thin text-gray-500">
-            {category?.description}
-          </p>
+          <p className="text-center text-gray-500">{category?.description}</p>
         </div>
 
         <div className="py-8">

@@ -22,7 +22,7 @@ const CartIcon = () => {
       href="/cart"
       className="hoverEffect relative  flex items-center gap-1 rounded-md border border-gray-200 px-2 py-1 text-xs shadow-md hover:shadow-none md:gap-2 md:text-sm"
     >
-      <ShoppingCart className=" size-6 text-darkBlue" />
+      <ShoppingCart className=" size-[26px] text-darkBlue" />
       <span className="hidden text-base font-semibold md:inline-block">
         Korpa
       </span>

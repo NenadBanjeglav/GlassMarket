@@ -13,20 +13,8 @@ import razdelnikLogo from "@/public/glass-market-rezdelnik.png";
 import Container from "@/components/Container";
 import FeaturesBanner from "@/components/FeaturesBanner";
 
-// interface SearchParams {
-//   category?: string;
-//   volume?: string; // Volume is received as a string from URL params
-// }
-
 export default async function Home() {
-  // const searchParams = await params.searchParams;
-  // // const categorySlug = searchParams?.category;
-  // // const volumeSlug = searchParams?.volume
-  // //   ? parseInt(searchParams.volume)
-  // //   : undefined;
-
   const heroes = await getHero();
-
   const productsSale = await getProductsOnSale();
   const categories = await getAllCategories();
   const productsNew = await getProductsNew();
@@ -34,6 +22,21 @@ export default async function Home() {
   return (
     <div>
       <HeroBanner heroes={heroes} />
+      <Container>
+        <div className="py-10">
+          <h2 className="text-center text-2xl font-semibold text-gray-600">
+            UVOZ I PRODAJA{" "}
+            <span className="text-lightBlue">STAKLENE AMBALAŽE</span>
+          </h2>
+          <p className="text-center text-gray-500">
+            U našoj ponudi možete pronaći širok spektar ambalažnih rešenja,
+            uključujući različite modele boca i tegli, kao i razne vrste
+            zatvarača: čepove, poklopce i PVC kapice. Naš asortiman je pažljivo
+            osmišljen kako bi omogućio optimalno zatvaranje i pakovanje odabrane
+            ambalaže, u skladu sa vašim specifičnim potrebama.
+          </p>
+        </div>
+      </Container>
       <FeaturesBanner />
       <CategoriesCarousel categories={categories} />
 
