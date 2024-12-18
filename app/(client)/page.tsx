@@ -1,3 +1,4 @@
+import CategoriesCarousel from "@/components/CategoriesCarousel";
 import HeroBanner from "@/components/HeroBanner";
 import ProductsList from "@/components/ProductList";
 import { getAllCategories, getAllProducts, getHero } from "@/sanity/helpers";
@@ -24,6 +25,7 @@ export default async function Home(params: {
   return (
     <div>
       <HeroBanner heroes={heroes} />
+      <CategoriesCarousel categories={categories} />
       <section id="products">
         <ProductsList
           products={products}

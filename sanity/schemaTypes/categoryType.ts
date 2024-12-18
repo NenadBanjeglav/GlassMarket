@@ -30,11 +30,13 @@ export const categoryType = defineType({
       type: "text",
     }),
     defineField({
-      name: "parentCategory",
-      title: "Parent Category",
-      type: "reference",
-      to: [{ type: "category" }],
-      description: "Select a parent category to create a nested structure",
+      name: "image",
+      title: "Product Image",
+      type: "image",
+      options: {
+        hotspot: true,
+      },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "subcategories",

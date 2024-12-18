@@ -8,6 +8,7 @@ import {
   CATEGORIES_QUERY,
   HERO_QUERY,
   MY_ORDERS_QUERY,
+  PRODUCT_BY_CATEGORY_QUERY,
   PRODUCT_BY_SLUG,
 } from "./queries";
 
@@ -67,6 +68,22 @@ export const getAllCategories = async () => {
     return categories.data || [];
   } catch (error) {
     console.error("Error fetching Categories data:", error);
+    return [];
+  }
+};
+
+export const getProductsByCategory = async (categorySlug: string) => {
+  try {
+    const products = await sanityFetch({
+      query: PRODUCT_BY_CATEGORY_QUERY,
+      params: {
+        categorySlug,
+      },
+    });
+
+    return products?.data || [];
+  } catch (error) {
+    console.error("Fetching product by category error", error);
     return [];
   }
 };
