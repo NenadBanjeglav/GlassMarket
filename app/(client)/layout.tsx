@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import { ClerkProvider } from "@clerk/nextjs";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
+import AdressBanner from "@/components/AdressBanner";
 
 const poppins = localFont({
   src: "../font/Poppins.woff2",
@@ -64,6 +65,7 @@ export default function RootLayout({
     <ClerkProvider dynamic>
       <html lang="sr-Latn">
         <body className={`${poppins.variable} antialiased`}>
+          <AdressBanner />
           <Header />
           {children}
           <Footer />
