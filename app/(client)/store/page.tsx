@@ -29,7 +29,7 @@ const StorePage = async ({ searchParams }: { searchParams: SearchParams }) => {
           idealno rešenje za vaše potrebe pakovanja.
         </p>
       </div>
-      <div className="flex gap-4 pb-4">
+      <div className="flex flex-col gap-4 pb-4 md:flex-row">
         <CategorySelector categories={categories} />
         <VolumeSelector />
       </div>
