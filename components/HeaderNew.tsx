@@ -21,6 +21,7 @@ import {
   SignInButton,
 } from "@clerk/nextjs";
 import CartIcon from "./CartIcon";
+import Container from "./Container";
 
 export const RoundedDrawerNavExample = ({
   categories,
@@ -44,55 +45,57 @@ export const RoundedDrawerNavExample = ({
 
   return (
     <header className="bg-white">
-      <RoundedDrawerNav
-        orders={orders}
-        links={[
-          {
-            title: "Kategorije",
-            sublinks: [
-              { title: "Svi Proizvodi", href: "/store" },
-              ...categorySlugs,
-            ],
-          },
+      <Container>
+        <RoundedDrawerNav
+          orders={orders}
+          links={[
+            {
+              title: "Kategorije",
+              sublinks: [
+                { title: "Svi Proizvodi", href: "/store" },
+                ...categorySlugs,
+              ],
+            },
 
-          {
-            title: "Podrška",
-            sublinks: [
-              {
-                title: "Kako naručiti",
-                href: "/how-to-order",
-              },
-              {
-                title: "Način plaćanja",
-                href: "/payment-options",
-              },
-              {
-                title: "Reklamacije",
-                href: "/returns",
-              },
-              {
-                title: "Način i cena dostave",
-                href: "/shipping",
-              },
-            ],
-          },
-          {
-            title: "Kompanija",
-            sublinks: [
-              {
-                title: "O nama",
-                href: "/about",
-              },
-              {
-                title: "Kontakt",
-                href: "/contact",
-              },
-            ],
-          },
-        ]}
-        navBackground="bg-white"
-        bodyBackground="bg-white"
-      ></RoundedDrawerNav>
+            {
+              title: "Podrška",
+              sublinks: [
+                {
+                  title: "Kako naručiti",
+                  href: "/how-to-order",
+                },
+                {
+                  title: "Način plaćanja",
+                  href: "/payment-options",
+                },
+                {
+                  title: "Reklamacije",
+                  href: "/returns",
+                },
+                {
+                  title: "Način i cena dostave",
+                  href: "/shipping",
+                },
+              ],
+            },
+            {
+              title: "Kompanija",
+              sublinks: [
+                {
+                  title: "O nama",
+                  href: "/about",
+                },
+                {
+                  title: "Kontakt",
+                  href: "/contact",
+                },
+              ],
+            },
+          ]}
+          navBackground="bg-white"
+          bodyBackground="bg-white"
+        ></RoundedDrawerNav>
+      </Container>
     </header>
   );
 };
@@ -128,7 +131,7 @@ const RoundedDrawerNav = ({
     <>
       <nav
         onMouseLeave={() => setHovered(null)}
-        className={`${navBackground} p-4`}
+        className={`${navBackground}  py-4`}
       >
         <div className="flex items-start justify-between ">
           <div className="flex items-start">
