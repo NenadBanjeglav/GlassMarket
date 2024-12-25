@@ -59,7 +59,7 @@ const ProductPage = async ({
             <p className="text-gray-500">{product?.weight} g</p>
           </div>
 
-          {product?.stock && (
+          {product?.inStock && (
             <p className="w-24 rounded-lg bg-green-100 py-2.5 text-center text-sm font-semibold text-green-600">
               Na lageru
             </p>
