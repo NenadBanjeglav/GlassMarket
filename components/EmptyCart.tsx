@@ -20,7 +20,7 @@ const EmptyCart = () => {
         našu ponudu i pronađite proizvod koji vam odgovara!
       </p>
       <Link
-        href="/"
+        href="/store"
         className="inline-block rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors duration-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
         Započnite kupovinu

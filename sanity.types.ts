@@ -75,20 +75,20 @@ export type Order = {
   _updatedAt: string;
   _rev: string;
   orderNumber?: string;
-  clerkUserId?: string;
   customerName?: string;
   email?: string;
   phone?: string;
   city?: string;
   street?: string;
   postalCode?: string;
+  paymentMethod?: "bankTransfer" | "cashOnDelivery";
   deliveryMethod?: "store" | "delivery";
   companyName?: string;
   pib?: string;
   message?: string;
-  total?: number;
-  discountedPrice?: number;
-  amountDiscount?: number;
+  priceOfProducts?: number;
+  deliveryPrice?: number;
+  totalPrice?: number;
   products?: Array<{
     product?: {
       _ref: string;
@@ -100,7 +100,7 @@ export type Order = {
     _key: string;
   }>;
   createdAt?: string;
-  status?: "confirmed" | "shipped";
+  status?: "confirmed" | "shipped" | "pickedUp";
 };
 
 export type Product = {
@@ -136,7 +136,7 @@ export type Product = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "category";
   }>;
-  stock?: number;
+  inStock?: boolean;
   status?: "NOVO" | "AKCIJA";
   relatedCaps?: Array<{
     _ref: string;
@@ -324,7 +324,7 @@ export type ALL_PRODUCT_QUERYResult = Array<{
     _key: string;
     [internalGroqTypeReferenceTo]?: "category";
   }>;
-  stock?: number;
+  inStock?: boolean;
   status?: "AKCIJA" | "NOVO";
   relatedCaps?: Array<{
     _ref: string;
@@ -369,7 +369,7 @@ export type PRODUCT_BY_SLUGResult = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "category";
   }>;
-  stock?: number;
+  inStock?: boolean;
   status?: "AKCIJA" | "NOVO";
   relatedCaps: Array<{
     _id: string;
@@ -404,7 +404,7 @@ export type PRODUCT_BY_SLUGResult = {
       _key: string;
       [internalGroqTypeReferenceTo]?: "category";
     }>;
-    stock?: number;
+    inStock?: boolean;
     status?: "AKCIJA" | "NOVO";
     relatedCaps?: Array<{
       _ref: string;
@@ -415,6 +415,168 @@ export type PRODUCT_BY_SLUGResult = {
     }>;
   }> | null;
 } | null;
+// Variable: PRODUCTS_ON_SALE
+// Query: *[_type == "product" && status == "AKCIJA"] | order(name asc) {    ...,    "relatedCaps": relatedCaps[]->{      ...    }  }
+export type PRODUCTS_ON_SALEResult = Array<{
+  _id: string;
+  _type: "product";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  image?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  description?: string;
+  volume?: number;
+  width?: number;
+  height?: number;
+  weight?: number;
+  price?: number;
+  discount?: number;
+  categories?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "category";
+  }>;
+  inStock?: boolean;
+  status?: "AKCIJA" | "NOVO";
+  relatedCaps: Array<{
+    _id: string;
+    _type: "product";
+    _createdAt: string;
+    _updatedAt: string;
+    _rev: string;
+    name?: string;
+    slug?: Slug;
+    image?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    };
+    description?: string;
+    volume?: number;
+    width?: number;
+    height?: number;
+    weight?: number;
+    price?: number;
+    discount?: number;
+    categories?: Array<{
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      _key: string;
+      [internalGroqTypeReferenceTo]?: "category";
+    }>;
+    inStock?: boolean;
+    status?: "AKCIJA" | "NOVO";
+    relatedCaps?: Array<{
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      _key: string;
+      [internalGroqTypeReferenceTo]?: "product";
+    }>;
+  }> | null;
+}>;
+// Variable: PRODUCTS_NEW
+// Query: *[_type == "product" && status == "NOVO"] | order(name asc) {    ...,    "relatedCaps": relatedCaps[]->{      ...    }  }
+export type PRODUCTS_NEWResult = Array<{
+  _id: string;
+  _type: "product";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  image?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  description?: string;
+  volume?: number;
+  width?: number;
+  height?: number;
+  weight?: number;
+  price?: number;
+  discount?: number;
+  categories?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "category";
+  }>;
+  inStock?: boolean;
+  status?: "AKCIJA" | "NOVO";
+  relatedCaps: Array<{
+    _id: string;
+    _type: "product";
+    _createdAt: string;
+    _updatedAt: string;
+    _rev: string;
+    name?: string;
+    slug?: Slug;
+    image?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    };
+    description?: string;
+    volume?: number;
+    width?: number;
+    height?: number;
+    weight?: number;
+    price?: number;
+    discount?: number;
+    categories?: Array<{
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      _key: string;
+      [internalGroqTypeReferenceTo]?: "category";
+    }>;
+    inStock?: boolean;
+    status?: "AKCIJA" | "NOVO";
+    relatedCaps?: Array<{
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      _key: string;
+      [internalGroqTypeReferenceTo]?: "product";
+    }>;
+  }> | null;
+}>;
 // Variable: PRODUCT_BY_CATEGORY_QUERY
 // Query: *[_type == "product" && references(*[_type == "category" && slug.current == $categorySlug]._id)] | order(name asc)
 export type PRODUCT_BY_CATEGORY_QUERYResult = Array<{
@@ -450,7 +612,7 @@ export type PRODUCT_BY_CATEGORY_QUERYResult = Array<{
     _key: string;
     [internalGroqTypeReferenceTo]?: "category";
   }>;
-  stock?: number;
+  inStock?: boolean;
   status?: "AKCIJA" | "NOVO";
   relatedCaps?: Array<{
     _ref: string;
@@ -491,7 +653,7 @@ export type CATEGORIES_QUERYResult = Array<{
   }>;
 }>;
 // Variable: MY_ORDERS_QUERY
-// Query: *[      _type == "order" && clerkUserId == $userId  ] | order(orderDate asc) {      ...,      products[]{          ...,          product->      }  }
+// Query: *[      _type == "order" && clerkUserId == $userId  ] | order(_createdAt desc) {      ...,      products[]{          ...,          product->      }  }
 export type MY_ORDERS_QUERYResult = Array<{
   _id: string;
   _type: "order";
@@ -499,20 +661,20 @@ export type MY_ORDERS_QUERYResult = Array<{
   _updatedAt: string;
   _rev: string;
   orderNumber?: string;
-  clerkUserId?: string;
   customerName?: string;
   email?: string;
   phone?: string;
   city?: string;
   street?: string;
   postalCode?: string;
+  paymentMethod?: "bankTransfer" | "cashOnDelivery";
   deliveryMethod?: "delivery" | "store";
   companyName?: string;
   pib?: string;
   message?: string;
-  total?: number;
-  discountedPrice?: number;
-  amountDiscount?: number;
+  priceOfProducts?: number;
+  deliveryPrice?: number;
+  totalPrice?: number;
   products: Array<{
     product: {
       _id: string;
@@ -547,7 +709,7 @@ export type MY_ORDERS_QUERYResult = Array<{
         _key: string;
         [internalGroqTypeReferenceTo]?: "category";
       }>;
-      stock?: number;
+      inStock?: boolean;
       status?: "AKCIJA" | "NOVO";
       relatedCaps?: Array<{
         _ref: string;
@@ -561,7 +723,80 @@ export type MY_ORDERS_QUERYResult = Array<{
     _key: string;
   }> | null;
   createdAt?: string;
-  status?: "confirmed" | "shipped";
+  status?: "confirmed" | "pickedUp" | "shipped";
+}>;
+// Variable: ALL_ORDERS_QUERY
+// Query: *[      _type == "order"  ] | order(_createdAt desc) {      ...,      products[]{          ...,          product->      }  }
+export type ALL_ORDERS_QUERYResult = Array<{
+  _id: string;
+  _type: "order";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  orderNumber?: string;
+  customerName?: string;
+  email?: string;
+  phone?: string;
+  city?: string;
+  street?: string;
+  postalCode?: string;
+  paymentMethod?: "bankTransfer" | "cashOnDelivery";
+  deliveryMethod?: "delivery" | "store";
+  companyName?: string;
+  pib?: string;
+  message?: string;
+  priceOfProducts?: number;
+  deliveryPrice?: number;
+  totalPrice?: number;
+  products: Array<{
+    product: {
+      _id: string;
+      _type: "product";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      name?: string;
+      slug?: Slug;
+      image?: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+      };
+      description?: string;
+      volume?: number;
+      width?: number;
+      height?: number;
+      weight?: number;
+      price?: number;
+      discount?: number;
+      categories?: Array<{
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        _key: string;
+        [internalGroqTypeReferenceTo]?: "category";
+      }>;
+      inStock?: boolean;
+      status?: "AKCIJA" | "NOVO";
+      relatedCaps?: Array<{
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        _key: string;
+        [internalGroqTypeReferenceTo]?: "product";
+      }>;
+    } | null;
+    quantity?: number;
+    _key: string;
+  }> | null;
+  createdAt?: string;
+  status?: "confirmed" | "pickedUp" | "shipped";
 }>;
 
 // Query TypeMap
@@ -571,8 +806,11 @@ declare module "@sanity/client" {
     "\n    *[_type == \"hero\"] | order(name asc)\n    ": HERO_QUERYResult;
     "\n  *[\n    _type == \"product\" &&\n    (!defined($categorySlug) || $categorySlug in categories[]->slug.current) &&\n    (!defined($volumeSlug) || volume <= $volumeSlug)\n  ] | order(volume desc)\n": ALL_PRODUCT_QUERYResult;
     "*[_type == \"product\" && slug.current == $slug] | order(name asc)[0] {\n    ...,\n    \"relatedCaps\": relatedCaps[]->{\n  ...\n}\n  }": PRODUCT_BY_SLUGResult;
+    "*[_type == \"product\" && status == \"AKCIJA\"] | order(name asc) {\n    ...,\n    \"relatedCaps\": relatedCaps[]->{\n      ...\n    }\n  }": PRODUCTS_ON_SALEResult;
+    "*[_type == \"product\" && status == \"NOVO\"] | order(name asc) {\n    ...,\n    \"relatedCaps\": relatedCaps[]->{\n      ...\n    }\n  }": PRODUCTS_NEWResult;
     "*[_type == \"product\" && references(*[_type == \"category\" && slug.current == $categorySlug]._id)] | order(name asc)": PRODUCT_BY_CATEGORY_QUERYResult;
     "*[_type == \"category\"] | order(name asc)": CATEGORIES_QUERYResult;
-    "\n  *[\n      _type == \"order\" && clerkUserId == $userId\n  ] | order(orderDate asc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": MY_ORDERS_QUERYResult;
+    "\n  *[\n      _type == \"order\" && clerkUserId == $userId\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": MY_ORDERS_QUERYResult;
+    "\n  *[\n      _type == \"order\"\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": ALL_ORDERS_QUERYResult;
   }
 }

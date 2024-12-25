@@ -25,7 +25,7 @@ const Header = async () => {
     orders = await getUserOrders(user.id);
   }
   return (
-    <header className="sticky top-0 z-50 w-full bg-white py-4 shadow-md">
+    <header className="sticky top-0 z-50 w-full bg-white shadow-md">
       <Container className="flex items-center justify-between gap-5">
         <Link href="/">
           <Image src="/logo.jpg" alt="logo" width={70} height={40} priority />

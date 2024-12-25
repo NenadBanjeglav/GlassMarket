@@ -22,16 +22,16 @@ const ProductCard = ({ product }: Props) => {
               height={500}
               width={500}
               loading="lazy"
-              className={`h-80 w-full overflow-hidden object-cover transition-transform duration-500 ${product.stock !== 0 && "group-hover:scale-105"}`}
+              className={`h-80 w-full overflow-hidden object-cover transition-transform duration-500 ${product.inStock && "group-hover:scale-105"}`}
             />
           </Link>
         )}
-        {product.stock === 0 && (
+        {!product.inStock && (
           <div className="absolute left-0 top-0 flex size-full items-center justify-center bg-black/50">
             <p className="text-lg font-bold text-white">Nema na Stanju</p>
           </div>
         )}
-        {product.status && product.stock !== 0 && (
+        {product.status && product.inStock && (
           <div className="absolute left-1 top-1 z-10 flex flex-col items-center space-y-1 transition-opacity duration-300 group-hover:opacity-0">
             {product.status?.split("").map((char, index) => (
               <span className="font-semibold uppercase" key={index}>

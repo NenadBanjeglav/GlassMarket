@@ -17,31 +17,33 @@ const CategoryPage = async ({ params }: Props) => {
   const hasVolumeProducts = products.some((product) => product.volume! > 0);
 
   return (
-    <div className="flex flex-col items-center bg-gray-100">
-      <Container className="mt-3 w-full rounded-lg bg-white p-8 shadow-md">
-        <div className="pb-10">
-          <h2 className="text-center text-2xl font-semibold uppercase text-gray-600">
-            Naša ponuda u kategoriji{" "}
-            <span className="text-lightBlue">
-              {slug
-                .split("-")
-                .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                .join(" ")}
-            </span>
-          </h2>
-          <p className="text-center text-gray-500">{category?.description}</p>
-        </div>
+    <main>
+      <div className="flex flex-col items-center bg-gray-100">
+        <Container className="mt-3 w-full rounded-lg bg-white p-8 shadow-md">
+          <div className="pb-10">
+            <h2 className="text-center text-2xl font-semibold uppercase text-gray-600">
+              Naša ponuda u kategoriji{" "}
+              <span className="text-lightBlue">
+                {slug
+                  .split("-")
+                  .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                  .join(" ")}
+              </span>
+            </h2>
+            <p className="text-center text-gray-500">{category?.description}</p>
+          </div>
 
-        <div className="py-8">
-          {hasVolumeProducts && (
-            <div className="pb-4">
-              <VolumeSelector />
-            </div>
-          )}
-          <ProductGrid products={products} />
-        </div>
-      </Container>
-    </div>
+          <div className="py-8">
+            {hasVolumeProducts && (
+              <div className="pb-4">
+                <VolumeSelector />
+              </div>
+            )}
+            <ProductGrid products={products} />
+          </div>
+        </Container>
+      </div>
+    </main>
   );
 };
 

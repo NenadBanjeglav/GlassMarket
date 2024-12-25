@@ -23,25 +23,13 @@ const QuantityButtons = ({ product, className }: Props) => {
 
   useEffect(() => {
     setInputCount(getItemCount(product._id).toString());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getItemCount(product._id)]);
 
   const handleUpdateProduct = (action: "add" | "remove") => {
     setIsUpdating(true);
     const currentCount = parseInt(inputCount, 10) || 0;
     const newCount = action === "add" ? currentCount + 1 : currentCount - 1;
-
-    // Check if the new count is within the available stock
-    if (newCount > product.stock!) {
-      toast.error(`Maksimalna dostupna količina je ${product.stock}.`);
-      setIsUpdating(false);
-      return;
-    }
-
-    // Ensure the count is not negative
-    if (newCount < 0) {
-      setIsUpdating(false);
-      return;
-    }
 
     setInputCount(newCount.toString());
 
@@ -66,17 +54,8 @@ const QuantityButtons = ({ product, className }: Props) => {
   const handleInputBlur = () => {
     const count = inputCount === "" ? 0 : parseInt(inputCount, 10);
 
-    if (count > product.stock!) {
-      toast.error(`Maksimalna dostupna količina je ${product.stock}.`);
-      setInputCount(product.stock!.toString()); // Set to the highest possible stock value
-      setItemCount(product._id, product.stock!);
-      return;
-    }
-
     setItemCount(product._id, count);
   };
-
-  // const itemCount = getItemCount(product._id);
 
   return (
     <div className={cn("flex items-center gap-2 pb-1 text-base", className)}>

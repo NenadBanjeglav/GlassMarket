@@ -20,7 +20,7 @@ export default async function Home() {
   const productsNew = await getProductsNew();
 
   return (
-    <div>
+    <main className="py-4">
       <HeroBanner heroes={heroes} />
       <Container>
         <div className="py-10">
@@ -57,7 +57,11 @@ export default async function Home() {
                 sniženim cenama. Ponuda traje dok traju zalihe!
               </p>
             </div>
-            <ProductCarousel products={productsSale} />
+            <ProductCarousel
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              //@ts-ignore
+              products={productsSale}
+            />
           </Container>
         </section>
       )}
@@ -80,18 +84,15 @@ export default async function Home() {
                 dok su još dostupni!
               </p>
             </div>
-            <ProductCarousel products={productsNew} />
+
+            <ProductCarousel
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              //@ts-ignore
+              products={productsNew}
+            />
           </Container>
         </section>
       )}
-
-      {/* <section id="products">
-        <ProductsList
-          products={products}
-          title={true}
-          categories={categories}
-        />
-      </section> */}
-    </div>
+    </main>
   );
 }

@@ -66,7 +66,7 @@ const OrdersPage = async () => {
               kupovinom kako biste videli vaše narudžbine ovde!
             </p>
             <Button asChild className="mt-6">
-              <Link href="/">Pregledajte proizvode</Link>
+              <Link href="/store">Pregledajte proizvode</Link>
             </Button>
           </div>
         )}

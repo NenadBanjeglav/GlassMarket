@@ -367,13 +367,6 @@
         },
         "optional": true
       },
-      "clerkUserId": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "string"
-        },
-        "optional": true
-      },
       "customerName": {
         "type": "objectAttribute",
         "value": {
@@ -416,6 +409,23 @@
         },
         "optional": true
       },
+      "paymentMethod": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "bankTransfer"
+            },
+            {
+              "type": "string",
+              "value": "cashOnDelivery"
+            }
+          ]
+        },
+        "optional": true
+      },
       "deliveryMethod": {
         "type": "objectAttribute",
         "value": {
@@ -454,21 +464,21 @@
         },
         "optional": true
       },
-      "total": {
+      "priceOfProducts": {
         "type": "objectAttribute",
         "value": {
           "type": "number"
         },
         "optional": true
       },
-      "discountedPrice": {
+      "deliveryPrice": {
         "type": "objectAttribute",
         "value": {
           "type": "number"
         },
         "optional": true
       },
-      "amountDiscount": {
+      "totalPrice": {
         "type": "objectAttribute",
         "value": {
           "type": "number"
@@ -554,6 +564,10 @@
             {
               "type": "string",
               "value": "shipped"
+            },
+            {
+              "type": "string",
+              "value": "pickedUp"
             }
           ]
         },
@@ -766,10 +780,10 @@
         },
         "optional": true
       },
-      "stock": {
+      "inStock": {
         "type": "objectAttribute",
         "value": {
-          "type": "number"
+          "type": "boolean"
         },
         "optional": true
       },

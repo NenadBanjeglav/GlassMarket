@@ -38,10 +38,15 @@ const OrderDetailsDialog: React.FC<Props> = ({ order, isOpen, onClose }) => {
           <p>
             <strong>Datum:</strong>{" "}
             {order._createdAt &&
-              new Date(order._createdAt).toLocaleDateString()}
+              new Date(order._createdAt).toLocaleDateString("sr", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })}
           </p>
           <p>
-            <strong>Status:</strong> {order.status}
+            <strong>Status:</strong>{" "}
+            {order.status === "confirmed" ? "Potvrđeno" : "Poslato"}
           </p>
         </div>
         <Table>

@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import AdressBanner from "@/components/AdressBanner";
 import { RoundedDrawerNavExample } from "@/components/HeaderNew";
 import { getAllCategories, getUserOrders } from "@/sanity/helpers";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 const poppins = localFont({
   src: "../font/Poppins.woff2",
@@ -66,6 +66,8 @@ export default async function RootLayout({
 }>) {
   const categories = await getAllCategories();
   const user = await currentUser();
+  const { userId } = await auth();
+  const isAdminUser = userId === process.env.ADMIN_USER_ID;
 
   let orders;
 
@@ -77,9 +79,14 @@ export default async function RootLayout({
       <html lang="sr-Latn">
         <body className={`${poppins.variable} antialiased`}>
           <AdressBanner />
-          <RoundedDrawerNavExample categories={categories} orders={orders} />
-          {/* <Header /> */}
 
+          <RoundedDrawerNavExample
+            categories={categories}
+            isAdminUser={isAdminUser}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
+            orders={orders}
+          />
           {children}
           <Footer />
           <Toaster />

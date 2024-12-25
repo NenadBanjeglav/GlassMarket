@@ -15,12 +15,10 @@ export const orderType = defineType({
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
-
     defineField({
       name: "clerkUserId",
       title: "Clerk User ID",
       type: "string",
-      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
@@ -64,7 +62,18 @@ export const orderType = defineType({
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
-
+    defineField({
+      name: "paymentMethod",
+      title: "Payment Method",
+      type: "string",
+      options: {
+        list: [
+          { title: "Direktna bankovna transakcija", value: "bankTransfer" },
+          { title: "Plaćanje prilikom preuzimanja", value: "cashOnDelivery" },
+        ],
+      },
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({
       name: "deliveryMethod",
       title: "Delivery Method",
@@ -97,24 +106,23 @@ export const orderType = defineType({
     }),
 
     defineField({
-      name: "total",
+      name: "priceOfProducts",
+      title: "Price of Products",
+      type: "number",
+      validation: (Rule) => Rule.required().min(0),
+    }),
+
+    defineField({
+      name: "deliveryPrice",
+      title: "Delivery Price",
+      type: "number",
+      validation: (Rule) => Rule.required().min(0),
+    }),
+    defineField({
+      name: "totalPrice",
       title: "Total Price",
       type: "number",
       validation: (Rule) => Rule.required().min(0),
-    }),
-
-    defineField({
-      name: "discountedPrice",
-      title: "Discounted Price",
-      type: "number",
-      validation: (Rule) => Rule.required().min(0),
-    }),
-
-    defineField({
-      name: "amountDiscount",
-      title: "Amount Discount",
-      type: "number",
-      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
@@ -145,11 +153,12 @@ export const orderType = defineType({
               image: "product.image",
               price: "product.price",
               currency: "product.currency",
+              discount: "product.discount",
             },
             prepare(select) {
               return {
                 title: `${select.product} x ${select.quantity}`,
-                subtitle: `${select.price * select.quantity} rsd`,
+                subtitle: `${select.price * (1 - select.discount / 100) * select.quantity} rsd`,
                 media: select.image,
               };
             },
@@ -174,6 +183,7 @@ export const orderType = defineType({
         list: [
           { title: "Confirmed", value: "confirmed" },
           { title: "Shipped", value: "shipped" },
+          { title: "Picked Up", value: "pickedUp" },
         ],
       },
     }),

@@ -59,9 +59,7 @@ const OrdersComponent = ({ orders }: { orders: MY_ORDERS_QUERYResult }) => {
                           : "bg-yellow-100 text-yellow-800"
                       }`}
                     >
-                      {order.status === "confirmed"
-                        ? "potvrđeno"
-                        : "na čekanju"}
+                      {order.status === "confirmed" ? "potvrđeno" : "poslato"}
                     </span>
                   </TableCell>
                 </TableRow>

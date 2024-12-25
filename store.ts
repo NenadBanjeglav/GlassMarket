@@ -16,8 +16,6 @@ interface CartState {
   getTotalPrice: () => number;
   getSubtotalPrice: () => {
     subtotal: number;
-    additionalDiscount: number;
-    finalPrice: number;
   };
   getItemCount: (productId: string) => number;
   getGroupedItems: () => CartItem[];
@@ -85,24 +83,8 @@ const userCartStore = create<CartState>()(
           return total + discountedPrice * item.quantity;
         }, 0);
 
-        // Determine the additional discount percentage based on subtotal thresholds
-        let discountPercentage = 0;
-
-        if (subtotal > 200000) {
-          discountPercentage = 0.2; // 20% discount
-        } else if (subtotal > 125000) {
-          discountPercentage = 0.15; // 15% discount
-        } else if (subtotal > 50000) {
-          discountPercentage = 0.1; // 10% discount
-        }
-
-        const additionalDiscount = subtotal * discountPercentage;
-        const finalPrice = subtotal - additionalDiscount;
-
         return {
           subtotal,
-          additionalDiscount,
-          finalPrice,
         };
       },
 

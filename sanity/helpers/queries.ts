@@ -66,3 +66,15 @@ export const MY_ORDERS_QUERY = defineQuery(`
       }
   }
   `);
+
+export const ALL_ORDERS_QUERY = defineQuery(`
+  *[
+      _type == "order"
+  ] | order(_createdAt desc) {
+      ...,
+      products[]{
+          ...,
+          product->
+      }
+  }
+  `);

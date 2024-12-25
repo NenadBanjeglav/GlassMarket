@@ -4,6 +4,7 @@ import { Product } from "@/sanity.types";
 import { backendClient } from "../lib/backendClient";
 import { sanityFetch } from "../lib/live";
 import {
+  ALL_ORDERS_QUERY,
   ALL_PRODUCT_QUERY,
   CATEGORIES_QUERY,
   HERO_QUERY,
@@ -117,10 +118,6 @@ export const getProductsByCategory = async (categorySlug: string) => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createOrder(orderData: any) {
   try {
-    // Update product stock first
-    await updateProductStock(orderData.products);
-
-    // Create the new order only after the stock update is successful
     const newOrder = await backendClient.create({
       ...orderData,
     });
@@ -173,6 +170,18 @@ export const getUserOrders = async (userId: string) => {
     const orders = await sanityFetch({
       query: MY_ORDERS_QUERY,
       params: { userId },
+    });
+    return orders.data || [];
+  } catch (error) {
+    console.error(`Fetching user order Error:`, error);
+    return [];
+  }
+};
+
+export const getAllOrders = async () => {
+  try {
+    const orders = await sanityFetch({
+      query: ALL_ORDERS_QUERY,
     });
     return orders.data || [];
   } catch (error) {

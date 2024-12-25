@@ -96,7 +96,7 @@ const Footer = async () => {
       </div>
 
       {/* Bottom Section */}
-      <div className="border-t border-gray-200 py-6 text-center text-sm">
+      <div className="container mx-auto max-w-7xl p-6  text-center text-sm">
         &copy; {new Date().getFullYear()}{" "}
         <span className="text-lightBlue">Glass</span>
         <span className="text-red-700">Market</span>. All rights reserved.

@@ -26,9 +26,11 @@ import Container from "./Container";
 export const RoundedDrawerNavExample = ({
   categories,
   orders,
+  isAdminUser,
 }: {
   categories: Category[];
   orders?: Order[];
+  isAdminUser: boolean;
 }) => {
   const categorySlugs = categories.reduce<{ title: string; href: string }[]>(
     (acc, cat) => {
@@ -44,9 +46,10 @@ export const RoundedDrawerNavExample = ({
   );
 
   return (
-    <header className="bg-white">
+    <header className="sticky top-0 z-50 border-b bg-white">
       <Container>
         <RoundedDrawerNav
+          isAdminUser={isAdminUser}
           orders={orders}
           links={[
             {
@@ -91,6 +94,15 @@ export const RoundedDrawerNavExample = ({
                 },
               ],
             },
+            {
+              title: "Admin",
+              sublinks: [
+                {
+                  title: "Analitika",
+                  href: "/admin",
+                },
+              ],
+            },
           ]}
           navBackground="bg-white"
           bodyBackground="bg-white"
@@ -109,12 +121,14 @@ const RoundedDrawerNav = ({
   navBackground,
   links,
   orders,
+  isAdminUser,
 }: {
   navBackground: string;
   bodyBackground: string;
   children?: ReactNode;
   links: LinkType[];
   orders?: Order[];
+  isAdminUser: boolean;
 }) => {
   const [hovered, setHovered] = useState<string | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -131,7 +145,7 @@ const RoundedDrawerNav = ({
     <>
       <nav
         onMouseLeave={() => setHovered(null)}
-        className={`${navBackground}  py-4`}
+        className={`${navBackground}  py-4 `}
       >
         <div className="flex items-start justify-between ">
           <div className="flex items-start">
@@ -149,6 +163,7 @@ const RoundedDrawerNav = ({
               setHovered={setHovered}
               hovered={hovered}
               activeSublinks={activeSublinks}
+              isAdminUser={isAdminUser}
             />
           </div>
           <div className="ml-auto flex items-center gap-[10px]">
@@ -197,7 +212,11 @@ const RoundedDrawerNav = ({
             </button>
           </div>
         </div>
-        <MobileLinks links={links} open={mobileNavOpen} />
+        <MobileLinks
+          links={links}
+          open={mobileNavOpen}
+          isAdminUser={isAdminUser}
+        />
       </nav>
     </>
   );
@@ -208,20 +227,25 @@ const DesktopLinks = ({
   setHovered,
   hovered,
   activeSublinks,
+  isAdminUser,
 }: {
   links: LinkType[];
   setHovered: Dispatch<SetStateAction<string | null>>;
   hovered: string | null;
   activeSublinks: LinkType["sublinks"];
+  isAdminUser: boolean;
 }) => {
   return (
     <div className="ml-9 mt-0.5 hidden text-gray-600 md:block">
       <div className="flex gap-6">
-        {links.map((l) => (
-          <TopLink key={l.title} setHovered={setHovered} title={l.title}>
-            {l.title}
-          </TopLink>
-        ))}
+        {links.map((l) => {
+          if (l.title === "Admin" && !isAdminUser) return null;
+          return (
+            <TopLink key={l.title} setHovered={setHovered} title={l.title}>
+              {l.title}
+            </TopLink>
+          );
+        })}
       </div>
       <AnimatePresence mode="popLayout">
         {hovered && (
@@ -253,7 +277,15 @@ const DesktopLinks = ({
   );
 };
 
-const MobileLinks = ({ links, open }: { links: LinkType[]; open: boolean }) => {
+const MobileLinks = ({
+  links,
+  open,
+  isAdminUser,
+}: {
+  links: LinkType[];
+  open: boolean;
+  isAdminUser: boolean;
+}) => {
   return (
     <AnimatePresence mode="popLayout">
       {open && (
@@ -270,6 +302,7 @@ const MobileLinks = ({ links, open }: { links: LinkType[]; open: boolean }) => {
           className="grid grid-cols-2 gap-6 py-6 md:hidden"
         >
           {links.map((l) => {
+            if (l.title === "Admin" && !isAdminUser) return null;
             return (
               <div key={l.title} className="space-y-1.5">
                 <span className=" block font-semibold text-gray-600">

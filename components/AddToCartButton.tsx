@@ -23,13 +23,14 @@ const AddToCartButton = ({ product, className }: Props) => {
   }, []);
 
   const itemCount = getItemCount(product._id);
-  const isOutOfStock = product.stock === 0;
+
+  const priceOfProduct = product.price! * (1 - (product.discount || 0) / 100);
 
   if (!isClient) return null;
 
   const handleAddToCart = () => {
     addItem(product);
-    toast.success(`${product.name?.substring(0, 12)}...added successfully!`);
+    toast.success(`${product.name?.substring(0, 12)}...dodat u korpu!`);
   };
 
   return (
@@ -42,15 +43,13 @@ const AddToCartButton = ({ product, className }: Props) => {
           </div>
           <div className="flex items-center justify-between border-t pt-1">
             <span className="text-xs text-muted-foreground">Cena</span>
-            <PriceFormatter
-              amount={product.price ? product.price * itemCount : 0}
-            />
+            <PriceFormatter amount={priceOfProduct * itemCount} />
           </div>
         </div>
       ) : (
         <Button
           onClick={handleAddToCart}
-          disabled={isOutOfStock}
+          disabled={!product.inStock}
           className={cn(
             "bg-darkBlue/10 text-black border-darkBlue py-2 my-2 w-full rounded-md font-medium hover:bg-darkBlue hover:text-white hoverEffect disabled:hover:cursor-not-allowed disabled:bg-darkBlue/10 disabled:text-gray-400  disabled:border-darkBlue/10",
             className
