@@ -37,7 +37,11 @@ const OrdersComponent = ({ orders }: { orders: MY_ORDERS_QUERYResult }) => {
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     {order._createdAt &&
-                      new Date(order._createdAt).toLocaleDateString()}
+                      new Date(order._createdAt).toLocaleDateString("sr-Latn", {
+                        day: "numeric",
+                        month: "2-digit",
+                        year: "numeric",
+                      })}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     {order.customerName}
@@ -47,7 +51,7 @@ const OrdersComponent = ({ orders }: { orders: MY_ORDERS_QUERYResult }) => {
                   </TableCell>
                   <TableCell>
                     <PriceFormatter
-                      amount={order.discountedPrice}
+                      amount={order.totalPrice}
                       className="font-medium text-black"
                     />
                   </TableCell>

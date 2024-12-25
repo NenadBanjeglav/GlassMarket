@@ -367,6 +367,13 @@
         },
         "optional": true
       },
+      "clerkUserId": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "customerName": {
         "type": "objectAttribute",
         "value": {

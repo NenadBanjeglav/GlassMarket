@@ -75,6 +75,7 @@ export type Order = {
   _updatedAt: string;
   _rev: string;
   orderNumber?: string;
+  clerkUserId?: string;
   customerName?: string;
   email?: string;
   phone?: string;
@@ -661,6 +662,7 @@ export type MY_ORDERS_QUERYResult = Array<{
   _updatedAt: string;
   _rev: string;
   orderNumber?: string;
+  clerkUserId?: string;
   customerName?: string;
   email?: string;
   phone?: string;
@@ -734,6 +736,7 @@ export type ALL_ORDERS_QUERYResult = Array<{
   _updatedAt: string;
   _rev: string;
   orderNumber?: string;
+  clerkUserId?: string;
   customerName?: string;
   email?: string;
   phone?: string;
