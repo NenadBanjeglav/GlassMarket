@@ -82,12 +82,12 @@ const Footer = async () => {
           </h3>
           <ul className="mt-4 flex flex-col items-center space-y-2 md:items-start">
             <li>
-              <Link href="#" className="hoverEffect hover:text-red-700">
+              <Link href="/about" className="hoverEffect hover:text-red-700">
                 O nama
               </Link>
             </li>
             <li>
-              <Link href="#" className="hoverEffect hover:text-red-700">
+              <Link href="/contact" className="hoverEffect hover:text-red-700">
                 Kontakt
               </Link>
             </li>

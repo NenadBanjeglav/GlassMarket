@@ -15,7 +15,7 @@ const AdressBanner = () => {
             <MapPin size={16} /> Arona Zagorice 6, 21203 Veternik, Srbija
           </Link>
           <p className="flex items-center gap-2">
-            <Clock size={16} /> Pon - Pet : 09.00 - 17.00
+            <Clock size={16} /> Pon - Pet : 08.00 - 16.00
           </p>
         </div>
         <div className="flex items-center justify-center gap-4">

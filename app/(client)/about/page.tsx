@@ -9,7 +9,7 @@ const AboutPage = () => {
     <main className="bg-white">
       <Container>
         <div className="py-10">
-          <div className="flex items-center justify-center">
+          <div className=" flex items-center justify-center">
             <Link href="/">
               <Image
                 src="/logo.jpg"
@@ -25,7 +25,10 @@ const AboutPage = () => {
             Vaš partner za kvalitetnu i pristupačnu staklenu ambalažu
           </p>
 
-          <p className="my-10 text-center text-red-700">
+          <h2 className="pt-10 text-center text-2xl font-semibold uppercase text-gray-600">
+            O nama
+          </h2>
+          <p className="text-center text-red-700">
             Firma LIKA PROMET DOO osnovana je 01.07.1996. godine.
           </p>
           <p className="text-center text-gray-500">
