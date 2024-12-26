@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const EmptyCart = () => {
   return (
-    <div className=" flex h-[400px] flex-col items-center justify-center gap-3 bg-white py-20">
+    <div className=" flex h-[300px] flex-col items-center justify-center gap-3 bg-white py-20 md:h-screen">
       <motion.div
         animate={{ scale: [1, 1.1, 1] }}
         transition={{ repeat: Infinity, duration: 2 }}

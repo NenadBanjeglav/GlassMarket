@@ -26,17 +26,20 @@ const OrderDetailsDialog: React.FC<Props> = ({ order, isOpen, onClose }) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Order Details - {order.orderNumber}</DialogTitle>
+          <DialogTitle>Detalji porudžbine</DialogTitle>
         </DialogHeader>
         <div>
           <p>
-            <strong>Customer:</strong> {order.customerName}
+            <strong>Broj:</strong> {order.orderNumber}
+          </p>
+          <p>
+            <strong>Kupac:</strong> {order.customerName}
           </p>
           <p>
             <strong>Email:</strong> {order.email}
           </p>
           <p>
-            <strong>Date:</strong>{" "}
+            <strong>Datum:</strong>{" "}
             {order._createdAt &&
               new Date(order._createdAt).toLocaleDateString("sr-Latn", {
                 day: "numeric",
@@ -68,6 +71,7 @@ const OrderDetailsDialog: React.FC<Props> = ({ order, isOpen, onClose }) => {
           <TableHeader>
             <TableRow>
               <TableHead>Proizvod</TableHead>
+              <TableHead>Cena/kom</TableHead>
               <TableHead>Kol.</TableHead>
               <TableHead>Cena</TableHead>
             </TableRow>
@@ -89,7 +93,19 @@ const OrderDetailsDialog: React.FC<Props> = ({ order, isOpen, onClose }) => {
                   )}
                   {product.product && product.product.name}
                 </TableCell>
-                <TableCell>{product.quantity}</TableCell>
+                <TableCell>
+                  {product.product?.price && (
+                    <PriceFormatter
+                      amount={
+                        product.product?.price *
+                        (1 - (product.product?.discount || 0) / 100)
+                      }
+                    />
+                  )}
+                </TableCell>
+                <TableCell className="text-sm font-semibold text-darkText">
+                  {product.quantity}
+                </TableCell>
                 <TableCell>
                   {product.product?.price && (
                     <PriceFormatter
@@ -98,7 +114,6 @@ const OrderDetailsDialog: React.FC<Props> = ({ order, isOpen, onClose }) => {
                         (1 - (product.product.discount || 0) / 100) *
                         product.quantity!
                       }
-                      className="font-medium text-black"
                     />
                   )}
                 </TableCell>
@@ -106,22 +121,24 @@ const OrderDetailsDialog: React.FC<Props> = ({ order, isOpen, onClose }) => {
             ))}
           </TableBody>
         </Table>
-        <div className="mt-4 flex items-center  justify-between px-2 text-right">
+        <div className=" flex items-center  justify-between px-2 text-right">
           <strong>Cena robe:</strong>
           <PriceFormatter
             amount={order.priceOfProducts}
             className="font-bold text-black"
           />
         </div>
-        <div className="mt-4 flex items-center  justify-between px-2 text-right">
-          <strong>Dostava:</strong>
-          <PriceFormatter
-            amount={order.deliveryPrice}
-            className="font-bold text-black"
-          />
-        </div>
-        <div className="mt-4 flex items-center  justify-between px-2 text-right">
-          <strong>Total:</strong>
+        {order.deliveryMethod === "delivery" && (
+          <div className=" flex items-center  justify-between px-2 text-right">
+            <strong>Dostava:</strong>
+            <PriceFormatter
+              amount={order.deliveryPrice}
+              className="font-bold text-black"
+            />
+          </div>
+        )}
+        <div className=" flex items-center  justify-between px-2 text-right">
+          <strong>Za platiti:</strong>
           <PriceFormatter
             amount={order.totalPrice}
             className="font-bold text-black"

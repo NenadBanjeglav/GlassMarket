@@ -2,6 +2,7 @@
 
 import CheckoutSteps from "@/components/CheckoutSteps";
 import Container from "@/components/Container";
+import EmptyCart from "@/components/EmptyCart";
 import Loader from "@/components/Loader";
 import OrderForm from "@/components/OrderForm";
 import userCartStore from "@/store";
@@ -34,7 +35,11 @@ const CustomerDetails = () => {
         </div>
 
         <CheckoutSteps current={1} />
-        <OrderForm orderItems={groupedItems} />
+        {groupedItems.length ? (
+          <OrderForm orderItems={groupedItems} />
+        ) : (
+          <EmptyCart />
+        )}
       </Container>
     </main>
   );
