@@ -101,6 +101,10 @@ export const RoundedDrawerNavExample = ({
                   title: "Analitika",
                   href: "/admin",
                 },
+                {
+                  title: "Studio",
+                  href: "/studio",
+                },
               ],
             },
           ]}
