@@ -11,6 +11,8 @@ const SuccessPage = () => {
   const searchParams = useSearchParams();
   const orderNumber = searchParams.get("orderNumber");
   const deliveryMethod = searchParams.get("deliveryMethod");
+  const paymentMethod = searchParams.get("paymentMethod");
+
   const { resetCart } = userCartStore();
 
   useEffect(() => {
@@ -42,9 +44,17 @@ const SuccessPage = () => {
           <p>Hvala vam na kupovini!</p>
           <p>
             {deliveryMethod === "store" &&
+              paymentMethod === "cashOnDelivery" &&
               "Vaša porudžbina je u procesu obrade i uskoro će biti spremna za preuzimanje u našoj prodavnici."}
             {deliveryMethod === "delivery" &&
+              paymentMethod === "cashOnDelivery" &&
               "Vaša porudžbina je u procesu obrade i uskoro će biti poslata."}
+            {deliveryMethod === "delivery" &&
+              paymentMethod === "bankTransfer" &&
+              "Platite porudžbinu direktno na našem računu. Vaša porudžbina neće biti poslata dok sredstva ne budu uplaćena na naš račun."}
+            {deliveryMethod === "store" &&
+              paymentMethod === "bankTransfer" &&
+              "Platite porudžbinu direktno na našem računu. Vaša pošiljka neće biti pripremljena za pakovanje dok uplata ne bude evidentirana na našem bankovnom računu."}
           </p>
           <p>
             Broj porudžbine: <br />
@@ -54,6 +64,18 @@ const SuccessPage = () => {
         <div className="mb-8 rounded-lg border border-gray-200 bg-green-50 p-4">
           <h2 className="mb-2 font-semibold text-green-800">Šta sledi?</h2>
           <ul className="space-y-1 text-sm text-green-700">
+            {paymentMethod === "bankTransfer" && (
+              <>
+                <li>
+                  Svoju porudžbu možete platiti direktnom uplatom na račun GLASS
+                  MARKET-a, žiro račun:<strong>220-139879-77</strong>. Plaćanje
+                  možete izvršiti standardnom uplatnicom u bilo kojoj pošti ili
+                  banci, ili putem Interneta ako imate Internet pristup svom
+                  računu (web banking).
+                </li>
+                <li>Molim vas koristite broj porudžbine kao poziv na broj.</li>
+              </>
+            )}
             {deliveryMethod === "delivery" && (
               <li>Obavestićemo vas kada vaša porudžbina bude poslata.</li>
             )}
@@ -64,7 +86,6 @@ const SuccessPage = () => {
                 preuzimanje.
               </li>
             )}
-            <li>Pratite status vaše porudžbine na našem sajtu.</li>
           </ul>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between", // Ensures footer placement
   },
   headerContainer: {
     flexDirection: "row",
@@ -151,7 +150,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 10,
     flexDirection: "row",
-    justifyContent: "space-between",
+
     borderTopWidth: 1,
     borderColor: "#ccc",
     paddingTop: 10,
