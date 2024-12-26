@@ -24,6 +24,30 @@ import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Loader } from "lucide-react";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
+import { pdf } from "@react-pdf/renderer";
+import { InvoiceDocument } from "./InvoiceDocument";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function generateAndDownloadPDF(orderData: any) {
+  // 1) Generate PDF blob from your InvoiceDocument
+  const blob = await pdf(<InvoiceDocument orderData={orderData} />).toBlob();
+
+  // 2) Create a URL from the blob
+  const url = URL.createObjectURL(blob);
+
+  // 3) Create a temporary link element
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `Porudzbenica_${orderData.orderNumber}.pdf`;
+
+  // 4) Append to the DOM, trigger click, and remove
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  // 5) Release the object URL
+  URL.revokeObjectURL(url);
+}
 
 const formSchema = z.object({
   name: z.string().min(1, "Ime je obavezno"),
@@ -49,6 +73,8 @@ interface Props {
   orderItems: CartItem[];
 }
 
+export type FormSchemaType = z.infer<typeof formSchema>;
+
 const OrderForm = ({ orderItems }: Props) => {
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
@@ -62,7 +88,7 @@ const OrderForm = ({ orderItems }: Props) => {
     getDeliveryPrice,
   } = userCartStore();
 
-  const form = useForm({
+  const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -91,15 +117,13 @@ const OrderForm = ({ orderItems }: Props) => {
     name: "paymentMethod",
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: FormSchemaType) => {
     setLoading(true);
 
     const orderNumber = crypto.randomUUID();
     const priceOfProducts = getSubtotalPrice().subtotal;
     const deliveryPrice =
       data.deliveryMethod === "delivery" ? getDeliveryPrice() : 0;
-    // const discountedPrice = getSubtotalPrice().subtotal + deliveryPrice;
 
     const orderData = {
       _type: "order",
@@ -131,14 +155,34 @@ const OrderForm = ({ orderItems }: Props) => {
       status: "confirmed",
     };
 
+    const orderDataForPdf = {
+      ...orderData,
+      products: orderItems.map(({ product }) => ({
+        _key: product._id,
+        quantity: getItemCount(product._id),
+        product: {
+          _type: "product",
+          _id: product._id,
+          name: product.name,
+          price: product.price,
+          discount: product.discount ?? 0,
+          weight: product.weight,
+          image: product.image,
+        },
+      })),
+    };
+
     try {
       const result = await createOrder(orderData);
 
       if (result.success) {
         toast.success("Porudžbina je uspešno kreirana!");
+
         router.push(
           `/success?orderNumber=${orderNumber}&deliveryMethod=${deliveryMethod}&paymentMethod=${paymentMethod}`
         );
+        await generateAndDownloadPDF(orderDataForPdf);
+        console.log(orderDataForPdf);
       } else {
         throw new Error(result.error);
       }
