@@ -1,4 +1,5 @@
 import Container from "@/components/Container";
+
 import React from "react";
 
 const ReturnsPage = () => {
@@ -66,9 +67,14 @@ const ReturnsPage = () => {
                 {" "}
                 e-mail-om
               </a>{" "}
-              uz fiskalni račun, a koji možete preuzeti
-              <a href="#" className="text-red-700 underline">
-                {" "}
+              uz fiskalni račun, a koji možete preuzeti{" "}
+              <a
+                href="https://cdn.sanity.io/files/u1gn9cq2/production/0e56d4a0a17a591eeae91216b9e691f5c772536b.pdf"
+                className="text-red-700 underline"
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 ovde &gt;&gt;&gt;
               </a>
               .

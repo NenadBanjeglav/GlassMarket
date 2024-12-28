@@ -30,7 +30,7 @@ const OrderDetailsDialog: React.FC<Props> = ({ order, isOpen, onClose }) => {
         </DialogHeader>
         <div>
           <p>
-            <strong>Broj:</strong> {order.orderNumber}
+            <strong>Broj:</strong> {order.orderNumber!.slice(-5)}
           </p>
           <p>
             <strong>Kupac:</strong> {order.customerName}

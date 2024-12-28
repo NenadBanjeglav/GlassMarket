@@ -13,6 +13,7 @@ import {
   PRODUCT_BY_SLUG,
   PRODUCTS_NEW,
   PRODUCTS_ON_SALE,
+  RETURN_FORM_QUERY,
 } from "./queries";
 
 export const getHero = async () => {
@@ -188,4 +189,22 @@ export const getAllOrders = async () => {
     console.error(`Fetching user order Error:`, error);
     return [];
   }
+};
+
+export const getReturnForm = async () => {
+  try {
+    const returnForm = await sanityFetch({
+      query: RETURN_FORM_QUERY,
+    });
+    return returnForm.data || [];
+  } catch (error) {
+    console.error(`Fetching return form Error:`, error);
+  }
+};
+
+export const getOrderSummary = async () => {
+  //get counts for each resource
+  //Calculate the total sales
+  //Get monthly sales
+  //Get latest sales
 };

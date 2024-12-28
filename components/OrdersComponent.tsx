@@ -33,7 +33,7 @@ const OrdersComponent = ({ orders }: { orders: MY_ORDERS_QUERYResult }) => {
                   className="h-12 cursor-pointer hover:bg-gray-100"
                 >
                   <TableCell className="font-medium">
-                    ...{order.orderNumber?.slice(-10) ?? "N/A"}
+                    ...{order.orderNumber?.slice(-5) ?? "N/A"}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     {order._createdAt &&

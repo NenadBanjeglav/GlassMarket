@@ -179,10 +179,9 @@ const OrderForm = ({ orderItems }: Props) => {
         toast.success("Porudžbina je uspešno kreirana!");
 
         router.push(
-          `/success?orderNumber=${orderNumber}&deliveryMethod=${deliveryMethod}&paymentMethod=${paymentMethod}`
+          `/success?orderNumber=${orderNumber.slice(-5)}&deliveryMethod=${deliveryMethod}&paymentMethod=${paymentMethod}`
         );
         await generateAndDownloadPDF(orderDataForPdf);
-        console.log(orderDataForPdf);
       } else {
         throw new Error(result.error);
       }

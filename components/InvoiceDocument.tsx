@@ -191,7 +191,7 @@ export function InvoiceDocument({ orderData }: InvoiceDocumentProps) {
           <View style={styles.titleBlock}>
             <Text style={styles.title}>Porudžbenica</Text>
             <Text style={styles.orderNumber}>
-              Broj porudžbine: {orderNumber}
+              Broj porudžbine: {orderNumber.slice(-5)}
             </Text>
             <Text style={styles.orderNumber}>
               Datum porudžbine:{" "}

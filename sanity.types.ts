@@ -39,6 +39,31 @@ export type SanityImageDimensions = {
   aspectRatio?: number;
 };
 
+export type Geopoint = {
+  _type: "geopoint";
+  lat?: number;
+  lng?: number;
+  alt?: number;
+};
+
+export type PdfFile = {
+  _id: string;
+  _type: "pdfFile";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  file?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
+    };
+    _type: "file";
+  };
+};
+
 export type SanityFileAsset = {
   _id: string;
   _type: "sanity.fileAsset";
@@ -59,13 +84,6 @@ export type SanityFileAsset = {
   path?: string;
   url?: string;
   source?: SanityAssetSourceData;
-};
-
-export type Geopoint = {
-  _type: "geopoint";
-  lat?: number;
-  lng?: number;
-  alt?: number;
 };
 
 export type Order = {
@@ -263,7 +281,7 @@ export type Slug = {
   source?: string;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | Order | Product | Hero | Category | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Slug;
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | Geopoint | PdfFile | SanityFileAsset | Order | Product | Hero | Category | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Slug;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/helpers/queries.ts
 // Variable: HERO_QUERY
@@ -801,6 +819,12 @@ export type ALL_ORDERS_QUERYResult = Array<{
   createdAt?: string;
   status?: "confirmed" | "pickedUp" | "shipped";
 }>;
+// Variable: RETURN_FORM_QUERY
+// Query: *[_type == "pdfFile"]{      title,      "url": file.asset->url    }
+export type RETURN_FORM_QUERYResult = Array<{
+  title: string | null;
+  url: string | null;
+}>;
 
 // Query TypeMap
 import "@sanity/client";
@@ -815,5 +839,6 @@ declare module "@sanity/client" {
     "*[_type == \"category\"] | order(name asc)": CATEGORIES_QUERYResult;
     "\n  *[\n      _type == \"order\" && clerkUserId == $userId\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": MY_ORDERS_QUERYResult;
     "\n  *[\n      _type == \"order\"\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": ALL_ORDERS_QUERYResult;
+    "\n*[_type == \"pdfFile\"]{\n      title,\n      \"url\": file.asset->url\n    }\n  ": RETURN_FORM_QUERYResult;
   }
 }

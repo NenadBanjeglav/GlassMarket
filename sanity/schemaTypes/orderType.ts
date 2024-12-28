@@ -14,11 +14,13 @@ export const orderType = defineType({
       title: "Order Number",
       type: "string",
       validation: (Rule) => Rule.required(),
+      readOnly: true,
     }),
     defineField({
       name: "clerkUserId",
       title: "Clerk User ID",
       type: "string",
+      readOnly: true,
     }),
 
     defineField({
@@ -26,6 +28,7 @@ export const orderType = defineType({
       title: "Customer Name",
       type: "string",
       validation: (Rule) => Rule.required(),
+      readOnly: true,
     }),
 
     defineField({
@@ -33,6 +36,7 @@ export const orderType = defineType({
       title: "Customer Email",
       type: "string",
       validation: (Rule) => Rule.required().email(),
+      readOnly: true,
     }),
 
     defineField({
@@ -40,6 +44,7 @@ export const orderType = defineType({
       title: "Phone Number",
       type: "string",
       validation: (Rule) => Rule.required(),
+      readOnly: true,
     }),
 
     defineField({
@@ -47,6 +52,7 @@ export const orderType = defineType({
       title: "City",
       type: "string",
       validation: (Rule) => Rule.required(),
+      readOnly: true,
     }),
 
     defineField({
@@ -54,6 +60,7 @@ export const orderType = defineType({
       title: "Street",
       type: "string",
       validation: (Rule) => Rule.required(),
+      readOnly: true,
     }),
 
     defineField({
@@ -61,6 +68,7 @@ export const orderType = defineType({
       title: "Postal Code",
       type: "string",
       validation: (Rule) => Rule.required(),
+      readOnly: true,
     }),
     defineField({
       name: "paymentMethod",
@@ -73,6 +81,7 @@ export const orderType = defineType({
         ],
       },
       validation: (Rule) => Rule.required(),
+      readOnly: true,
     }),
     defineField({
       name: "deliveryMethod",
@@ -85,24 +94,28 @@ export const orderType = defineType({
         ],
       },
       validation: (Rule) => Rule.required(),
+      readOnly: true,
     }),
 
     defineField({
       name: "companyName",
       title: "Company Name",
       type: "string",
+      readOnly: true,
     }),
 
     defineField({
       name: "pib",
       title: "PIB",
       type: "string",
+      readOnly: true,
     }),
 
     defineField({
       name: "message",
       title: "Customer Message",
       type: "text",
+      readOnly: true,
     }),
 
     defineField({
@@ -110,6 +123,7 @@ export const orderType = defineType({
       title: "Price of Products",
       type: "number",
       validation: (Rule) => Rule.required().min(0),
+      readOnly: true,
     }),
 
     defineField({
@@ -117,12 +131,14 @@ export const orderType = defineType({
       title: "Delivery Price",
       type: "number",
       validation: (Rule) => Rule.required().min(0),
+      readOnly: true,
     }),
     defineField({
       name: "totalPrice",
       title: "Total Price",
       type: "number",
       validation: (Rule) => Rule.required().min(0),
+      readOnly: true,
     }),
 
     defineField({
@@ -138,12 +154,14 @@ export const orderType = defineType({
               title: "Product",
               type: "reference",
               to: [{ type: "product" }],
+              readOnly: true,
             }),
             defineField({
               name: "quantity",
               title: "Quantity Purchased",
               type: "number",
               validation: (Rule) => Rule.required().min(1),
+              readOnly: true,
             }),
           ],
           preview: {
@@ -165,6 +183,7 @@ export const orderType = defineType({
           },
         }),
       ],
+      readOnly: true,
     }),
 
     defineField({
@@ -172,13 +191,13 @@ export const orderType = defineType({
       title: "Created At",
       type: "datetime",
       validation: (Rule) => Rule.required(),
+      readOnly: true,
     }),
 
     defineField({
       name: "status",
       title: "Order Status",
       type: "string",
-
       options: {
         list: [
           { title: "Confirmed", value: "confirmed" },

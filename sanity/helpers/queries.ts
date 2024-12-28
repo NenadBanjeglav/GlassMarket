@@ -78,3 +78,10 @@ export const ALL_ORDERS_QUERY = defineQuery(`
       }
   }
   `);
+
+export const RETURN_FORM_QUERY = defineQuery(`
+*[_type == "pdfFile"]{
+      title,
+      "url": file.asset->url
+    }
+  `);
