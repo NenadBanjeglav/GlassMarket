@@ -8,20 +8,15 @@ import React, {
   useState,
 } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Menu, Package, User, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 import Link from "next/link";
 import Image from "next/image";
 import { Category, Order } from "@/sanity.types";
-import {
-  ClerkLoaded,
-  SignedIn,
-  UserButton,
-  SignedOut,
-  SignInButton,
-} from "@clerk/nextjs";
+
 import CartIcon from "./CartIcon";
 import Container from "./Container";
+import Search from "./Search";
 
 export const RoundedDrawerNavExample = ({
   categories,
@@ -124,7 +119,7 @@ type LinkType = {
 const RoundedDrawerNav = ({
   navBackground,
   links,
-  orders,
+
   isAdminUser,
 }: {
   navBackground: string;
@@ -171,8 +166,9 @@ const RoundedDrawerNav = ({
             />
           </div>
           <div className="ml-auto flex items-center gap-[10px]">
+            <Search />
             <CartIcon />
-            <ClerkLoaded>
+            {/* <ClerkLoaded>
               <SignedIn>
                 <Link
                   href="/orders"
@@ -204,7 +200,7 @@ const RoundedDrawerNav = ({
                   </SignInButton>
                 </div>
               </SignedOut>
-            </ClerkLoaded>
+            </ClerkLoaded> */}
             <button
               onClick={() => setMobileNavOpen((pv) => !pv)}
               className="hoverEffect mt-0.5  flex items-start justify-end rounded-md border border-gray-200 px-2 py-1 text-gray-600 shadow-md hover:shadow-none md:hidden"
