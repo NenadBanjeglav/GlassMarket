@@ -30,7 +30,7 @@ const CustomerDetails = () => {
             Dobrodošli na korak do završetka vaše kupovine! Proverite i unesite
             svoje podatke kako biste osigurali brzu i sigurnu isporuku vaših
             staklenih rešenja. Vaša korpa je spremna – savršeni proizvodi čekaju
-            na vas!
+            na vas!!!
           </p>
         </div>
 
