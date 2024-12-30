@@ -168,39 +168,7 @@ const RoundedDrawerNav = ({
           <div className="ml-auto flex items-center gap-[10px]">
             <Search />
             <CartIcon />
-            {/* <ClerkLoaded>
-              <SignedIn>
-                <Link
-                  href="/orders"
-                  className="hoverEffect relative  flex items-center gap-1 rounded-md border border-gray-200 px-2 py-1 text-xs shadow-md hover:shadow-none md:gap-2 md:text-sm"
-                >
-                  <Package className=" size-[26px] text-darkBlue" />
-                  <span className="hidden text-base font-semibold md:inline-block">
-                    Porudžbine
-                  </span>
-                  <div className="absolute right-[-10px] top-[-10px] z-10 flex size-5 items-center justify-center rounded-full bg-red-500">
-                    <span className="text-[9px] font-bold text-white">
-                      {orders && orders?.length > 0 ? orders?.length : 0}
-                    </span>
-                  </div>
-                </Link>
-                <div className="hoverEffect flex items-center gap-1 rounded-md border border-gray-200 px-2 py-1 shadow-md hover:shadow-none">
-                  <UserButton />
-                </div>
-              </SignedIn>
-              <SignedOut>
-                <div className="hoverEffect  flex items-center gap-1 rounded-md border border-gray-200 px-2 py-1 shadow-md hover:shadow-none">
-                  <SignInButton mode="modal">
-                    <div className="flex gap-1">
-                      <User className=" size-[26px] text-darkBlue" />
-                      <span className="hidden text-base font-semibold md:inline-block">
-                        Prijavi se
-                      </span>
-                    </div>
-                  </SignInButton>
-                </div>
-              </SignedOut>
-            </ClerkLoaded> */}
+
             <button
               onClick={() => setMobileNavOpen((pv) => !pv)}
               className="hoverEffect mt-0.5  flex items-start justify-end rounded-md border border-gray-200 px-2 py-1 text-gray-600 shadow-md hover:shadow-none md:hidden"

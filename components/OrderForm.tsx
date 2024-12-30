@@ -17,7 +17,7 @@ import { useState } from "react";
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { createOrder } from "@/sanity/helpers";
+import { createOrder, createOrUpdateUser } from "@/sanity/helpers";
 import PriceFormatter from "./PriceFormatter";
 import { useForm, useWatch } from "react-hook-form";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
@@ -175,7 +175,30 @@ const OrderForm = ({ orderItems }: Props) => {
     try {
       const result = await createOrder(orderData);
 
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+
       if (result.success) {
+        const newUser = {
+          name: `${data.name} ${data.lastname}`,
+          email: data.email,
+          phone: data.phone,
+          address: {
+            city: data.city,
+            street: data.street,
+            postalCode: data.postalCode,
+          },
+          companyName: data.companyName,
+          pib: data.pib,
+        };
+
+        await createOrUpdateUser(
+          newUser,
+          result.newOrder!._id,
+          orderData.orderNumber
+        );
+
         toast.success("Porudžbina je uspešno kreirana!");
 
         router.push(

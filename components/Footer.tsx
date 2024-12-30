@@ -1,4 +1,11 @@
 import { getAllCategories } from "@/sanity/helpers";
+import {
+  ClerkLoaded,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/nextjs";
 import Link from "next/link";
 
 const Footer = async () => {
@@ -100,6 +107,26 @@ const Footer = async () => {
         &copy; {new Date().getFullYear()}{" "}
         <span className="text-lightBlue">Glass</span>
         <span className="text-red-700">Market</span>. All rights reserved.
+        <div className="mx-auto mt-4 flex max-w-sm items-center justify-center">
+          <ClerkLoaded>
+            <SignedIn>
+              <div className="hoverEffect flex items-center gap-1 rounded-md border border-gray-200 px-2 py-1 shadow-md hover:shadow-none">
+                <UserButton />
+              </div>
+            </SignedIn>
+            <SignedOut>
+              <div className="hoverEffect  flex items-center gap-1 rounded-md border border-gray-200 px-2 py-1 shadow-md hover:shadow-none">
+                <SignInButton mode="modal">
+                  <div className="flex gap-1">
+                    <span className="hidden text-xs font-thin md:inline-block">
+                      Admin
+                    </span>
+                  </div>
+                </SignInButton>
+              </div>
+            </SignedOut>
+          </ClerkLoaded>
+        </div>
       </div>
     </footer>
   );

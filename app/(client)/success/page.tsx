@@ -4,7 +4,7 @@ import userCartStore from "@/store";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 import { motion } from "motion/react";
-import { CheckIcon, Home, Package, ShoppingBag } from "lucide-react";
+import { CheckIcon, Home, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 
 const SuccessPage = () => {
@@ -88,7 +88,7 @@ const SuccessPage = () => {
             )}
           </ul>
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Link
             href="/"
             className="hoverEffect flex items-center justify-center rounded-lg bg-green-500 px-4 py-3 font-semibold text-white shadow-md hover:bg-green-600"
@@ -96,15 +96,9 @@ const SuccessPage = () => {
             <Home className="mr-2 size-5" />
             Početna
           </Link>
+
           <Link
-            href="/orders"
-            className="hoverEffect flex items-center justify-center rounded-lg bg-green-500 px-4 py-3 font-semibold text-white shadow-md hover:bg-green-600"
-          >
-            <Package className="mr-2 size-5" />
-            Porudžbine
-          </Link>
-          <Link
-            href="/"
+            href="/store"
             className="hoverEffect flex items-center justify-center rounded-lg bg-green-500 px-4 py-3 font-semibold text-white shadow-md hover:bg-green-600"
           >
             <ShoppingBag className="mr-2 size-5" />

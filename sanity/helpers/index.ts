@@ -202,6 +202,57 @@ export const getReturnForm = async () => {
   }
 };
 
+export async function createOrUpdateUser(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  userData: any,
+  orderRef: string,
+  orderNumber: string
+) {
+  try {
+    const userQuery = `*[_type == "user" && email == $email][0]`;
+    const existingUser = await backendClient.fetch(userQuery, {
+      email: userData.email,
+    });
+
+    console.log("Fetched user:", existingUser);
+
+    if (existingUser) {
+      await backendClient
+        .patch(existingUser._id)
+        .setIfMissing({ orders: [] })
+        .append("orders", [
+          {
+            _type: "reference",
+            _ref: orderRef,
+            _key: orderNumber,
+          },
+        ])
+        .commit();
+
+      return { success: true, user: existingUser, action: "updated" };
+    } else {
+      const newUser = {
+        _type: "user",
+        ...userData,
+        orders: [
+          {
+            _type: "reference",
+            _ref: orderRef,
+            _key: orderNumber,
+          },
+        ],
+        createdAt: new Date().toISOString(),
+      };
+
+      const createdUser = await backendClient.create(newUser);
+      return { success: true, user: createdUser, action: "created" };
+    }
+  } catch (error) {
+    console.error("Error creating or updating user:", error);
+    return { success: false, error: "Failed to create or update user" };
+  }
+}
+
 export const getOrderSummary = async () => {
   //get counts for each resource
   //Calculate the total sales
