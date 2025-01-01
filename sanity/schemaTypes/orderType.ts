@@ -202,7 +202,7 @@ export const orderType = defineType({
         list: [
           { title: "Confirmed", value: "confirmed" },
           { title: "Shipped", value: "shipped" },
-          { title: "Picked Up", value: "pickedUp" },
+          { title: "Cancelled", value: "cancelled" },
         ],
       },
     }),

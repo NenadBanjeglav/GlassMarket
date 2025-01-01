@@ -85,3 +85,24 @@ export const RETURN_FORM_QUERY = defineQuery(`
       "url": file.asset->url
     }
   `);
+
+export const ALL_ORDERS_COUNT_QUERY = defineQuery(`
+  count(*[_type == "order"])
+`);
+
+export const ALL_PRODUCTS_COUNT_QUERY = defineQuery(`
+  count(*[_type == "product"])
+`);
+
+export const ALL_USERS_COUNT_QUERY = defineQuery(`
+  count(*[_type == "user"])
+`);
+
+export const ALL_ORDERS_QUERY_SUMMARY = defineQuery(`
+  *[_type == "order"] {
+      priceOfProducts,
+      deliveryPrice,
+      totalPrice,
+      createdAt,
+    }
+`);

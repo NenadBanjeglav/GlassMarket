@@ -64,7 +64,7 @@ const OrderDetailsDialog: React.FC<Props> = ({ order, isOpen, onClose }) => {
             <strong>Status:</strong>{" "}
             {order.status === "confirmed" && "Potvrdjeno"}
             {order.status === "shipped" && "Poslato"}
-            {order.status === "pickedUp" && "Preuzeto"}
+            {order.status === "cancelled" && "Otkazano"}
           </p>
         </div>
         <Table>

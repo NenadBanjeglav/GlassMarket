@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use server";
 
 import { Product } from "@/sanity.types";
@@ -6,6 +8,8 @@ import { sanityFetch } from "../lib/live";
 import {
   ALL_ORDERS_QUERY,
   ALL_PRODUCT_QUERY,
+  ALL_PRODUCTS_COUNT_QUERY,
+  ALL_USERS_COUNT_QUERY,
   CATEGORIES_QUERY,
   HERO_QUERY,
   MY_ORDERS_QUERY,
@@ -15,6 +19,7 @@ import {
   PRODUCTS_ON_SALE,
   RETURN_FORM_QUERY,
 } from "./queries";
+import { revalidatePath } from "next/cache";
 
 export const getHero = async () => {
   try {
@@ -116,7 +121,6 @@ export const getProductsByCategory = async (categorySlug: string) => {
   }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createOrder(orderData: any) {
   try {
     const newOrder = await backendClient.create({
@@ -203,7 +207,6 @@ export const getReturnForm = async () => {
 };
 
 export async function createOrUpdateUser(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   userData: any,
   orderRef: string,
   orderNumber: string
@@ -213,8 +216,6 @@ export async function createOrUpdateUser(
     const existingUser = await backendClient.fetch(userQuery, {
       email: userData.email,
     });
-
-    console.log("Fetched user:", existingUser);
 
     if (existingUser) {
       await backendClient
@@ -253,9 +254,166 @@ export async function createOrUpdateUser(
   }
 }
 
+export const getProductCount = async () => {
+  try {
+    const count = await sanityFetch({
+      query: ALL_PRODUCTS_COUNT_QUERY,
+    });
+    return count || 0; // Return 0 if no count is found
+  } catch (error) {
+    console.error(`Fetching product count error:`, error);
+    return 0; // Return 0 in case of an error
+  }
+};
+
+export const getUserCount = async () => {
+  try {
+    const count = await sanityFetch({
+      query: ALL_USERS_COUNT_QUERY,
+    });
+    return count || 0; // Return 0 if no count is found
+  } catch (error) {
+    console.error(`Fetching user count error:`, error);
+    return 0; // Return 0 in case of an error
+  }
+};
+
+type SalesDataType = Array<{
+  month: string;
+  totalSales: number;
+}>;
+
+export const getSalesSummary = async () => {
+  const today = new Date();
+  const threeDaysAgo = new Date(today);
+  threeDaysAgo.setDate(today.getDate() - 3);
+  const sixMonthsAgo = new Date(today);
+  sixMonthsAgo.setMonth(today.getMonth() - 6);
+
+  try {
+    const orders = await sanityFetch({
+      query: ALL_ORDERS_QUERY,
+    });
+
+    const filteredOrders = orders.data.filter((order: any) => {
+      const orderDate = new Date(order.createdAt);
+      return orderDate >= sixMonthsAgo && orderDate <= today;
+    });
+
+    const salesData: SalesDataType = filteredOrders
+      .map((entry: any) => {
+        const month = new Date(entry.createdAt).toLocaleDateString("en-GB", {
+          month: "2-digit",
+          year: "2-digit",
+        });
+
+        return {
+          month,
+          totalSales: entry.totalPrice,
+        };
+      })
+      .reduce((acc: SalesDataType, entry: any) => {
+        // Check if the month already exists in the accumulator
+        const existingMonth = acc.find((item) => item.month === entry.month);
+
+        if (existingMonth) {
+          // If the month exists, add the totalSales to it
+          existingMonth.totalSales += entry.totalSales;
+        } else {
+          // If the month doesn't exist, add it to the accumulator
+          acc.push(entry);
+        }
+
+        return acc;
+      }, []);
+
+    // Sum up the priceOfProducts values
+
+    const totalSales = orders.data.reduce(
+      (sum: number, order: any) => sum + (order.totalPrice || 0),
+      0
+    );
+
+    const totalDelivery = orders.data.reduce(
+      (sum: number, order: any) => sum + (order.deliveryPrice || 0),
+      0
+    );
+
+    const totalPriceOfProducts = orders.data.reduce(
+      (sum: number, order: any) => sum + (order.priceOfProducts || 0),
+      0
+    );
+
+    const totalOrders = orders.data.length;
+
+    const recentOrders = orders.data.filter((order: any) => {
+      const orderDate = new Date(order.createdAt);
+      return orderDate >= threeDaysAgo && orderDate <= today;
+    });
+
+    return {
+      totalSales,
+      totalDelivery,
+      salesData,
+      totalOrders,
+      recentOrders,
+      totalPriceOfProducts,
+    };
+  } catch (error) {
+    console.error(`Fetching total sales error:`, error);
+    return 0; // Return 0 in case of an error
+  }
+};
+
 export const getOrderSummary = async () => {
-  //get counts for each resource
-  //Calculate the total sales
-  //Get monthly sales
-  //Get latest sales
+  const productCount = await getProductCount();
+  const userCount = await getUserCount();
+  const salesSummary = await getSalesSummary();
+
+  return {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    productCount: productCount.data,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    userCount: userCount.data,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    ordersCount: salesSummary.totalOrders,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    totalSales: salesSummary.totalSales,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    totalDelivery: salesSummary.totalDelivery,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    totalPriceOfProducts: salesSummary.totalPriceOfProducts,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    salesData: salesSummary.salesData,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    recentOrders: salesSummary.recentOrders,
+  };
+};
+
+export const updateOrderStatus = async (
+  orderNumber: string,
+  newStatus: string
+) => {
+  try {
+    // Find the order by orderNumber and update its status
+    await backendClient
+      .patch({
+        query: '*[_type == "order" && orderNumber == $orderNumber]',
+        params: { orderNumber },
+      })
+      .set({ status: newStatus })
+      .commit();
+
+    revalidatePath("/admin");
+  } catch (error) {
+    console.error("Failed to update order status:", error);
+  }
 };

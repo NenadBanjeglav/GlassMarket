@@ -46,6 +46,33 @@ export type Geopoint = {
   alt?: number;
 };
 
+export type User = {
+  _id: string;
+  _type: "user";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  clerkUserId?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  address?: {
+    city?: string;
+    street?: string;
+    postalCode?: string;
+  };
+  companyName?: string;
+  pib?: string;
+  orders?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "order";
+  }>;
+  createdAt?: string;
+};
+
 export type PdfFile = {
   _id: string;
   _type: "pdfFile";
@@ -119,7 +146,7 @@ export type Order = {
     _key: string;
   }>;
   createdAt?: string;
-  status?: "confirmed" | "shipped" | "pickedUp";
+  status?: "confirmed" | "shipped" | "cancelled";
 };
 
 export type Product = {
@@ -281,7 +308,7 @@ export type Slug = {
   source?: string;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | Geopoint | PdfFile | SanityFileAsset | Order | Product | Hero | Category | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Slug;
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | Geopoint | User | PdfFile | SanityFileAsset | Order | Product | Hero | Category | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Slug;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/helpers/queries.ts
 // Variable: HERO_QUERY
@@ -743,7 +770,7 @@ export type MY_ORDERS_QUERYResult = Array<{
     _key: string;
   }> | null;
   createdAt?: string;
-  status?: "confirmed" | "pickedUp" | "shipped";
+  status?: "cancelled" | "confirmed" | "shipped";
 }>;
 // Variable: ALL_ORDERS_QUERY
 // Query: *[      _type == "order"  ] | order(_createdAt desc) {      ...,      products[]{          ...,          product->      }  }
@@ -817,13 +844,30 @@ export type ALL_ORDERS_QUERYResult = Array<{
     _key: string;
   }> | null;
   createdAt?: string;
-  status?: "confirmed" | "pickedUp" | "shipped";
+  status?: "cancelled" | "confirmed" | "shipped";
 }>;
 // Variable: RETURN_FORM_QUERY
 // Query: *[_type == "pdfFile"]{      title,      "url": file.asset->url    }
 export type RETURN_FORM_QUERYResult = Array<{
   title: string | null;
   url: string | null;
+}>;
+// Variable: ALL_ORDERS_COUNT_QUERY
+// Query: count(*[_type == "order"])
+export type ALL_ORDERS_COUNT_QUERYResult = number;
+// Variable: ALL_PRODUCTS_COUNT_QUERY
+// Query: count(*[_type == "product"])
+export type ALL_PRODUCTS_COUNT_QUERYResult = number;
+// Variable: ALL_USERS_COUNT_QUERY
+// Query: count(*[_type == "user"])
+export type ALL_USERS_COUNT_QUERYResult = number;
+// Variable: ALL_ORDERS_QUERY_SUMMARY
+// Query: *[_type == "order"] {      priceOfProducts,      deliveryPrice,      totalPrice,      createdAt,    }
+export type ALL_ORDERS_QUERY_SUMMARYResult = Array<{
+  priceOfProducts: number | null;
+  deliveryPrice: number | null;
+  totalPrice: number | null;
+  createdAt: string | null;
 }>;
 
 // Query TypeMap
@@ -840,5 +884,9 @@ declare module "@sanity/client" {
     "\n  *[\n      _type == \"order\" && clerkUserId == $userId\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": MY_ORDERS_QUERYResult;
     "\n  *[\n      _type == \"order\"\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": ALL_ORDERS_QUERYResult;
     "\n*[_type == \"pdfFile\"]{\n      title,\n      \"url\": file.asset->url\n    }\n  ": RETURN_FORM_QUERYResult;
+    "\n  count(*[_type == \"order\"])\n": ALL_ORDERS_COUNT_QUERYResult;
+    "\n  count(*[_type == \"product\"])\n": ALL_PRODUCTS_COUNT_QUERYResult;
+    "\n  count(*[_type == \"user\"])\n": ALL_USERS_COUNT_QUERYResult;
+    "\n  *[_type == \"order\"] {\n      priceOfProducts,\n      deliveryPrice,\n      totalPrice,\n      createdAt,\n    }\n": ALL_ORDERS_QUERY_SUMMARYResult;
   }
 }
