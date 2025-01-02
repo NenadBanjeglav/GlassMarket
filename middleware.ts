@@ -5,7 +5,11 @@ const isProtectedRoute = createRouteMatcher(["/admin(.*)"]);
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
-  const isAdminUser = (await auth()).userId === process.env.ADMIN_USER_ID;
+  const userId = (await auth()).userId;
+  const isAdminUser =
+    userId === process.env.ADMIN_USER_ID ||
+    userId === process.env.ADMIN_USER_ID_2;
+
   if (isAdminRoute(req) && !isAdminUser) {
     return NextResponse.redirect(new URL("/", req.url));
   }

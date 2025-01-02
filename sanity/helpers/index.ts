@@ -281,6 +281,7 @@ export const getUserCount = async () => {
 type SalesDataType = Array<{
   month: string;
   totalSales: number;
+  totalDelivery: number;
 }>;
 
 export const getSalesSummary = async () => {
@@ -310,6 +311,7 @@ export const getSalesSummary = async () => {
         return {
           month,
           totalSales: entry.totalPrice,
+          totalDelivery: entry.deliveryPrice,
         };
       })
       .reduce((acc: SalesDataType, entry: any) => {
@@ -319,6 +321,7 @@ export const getSalesSummary = async () => {
         if (existingMonth) {
           // If the month exists, add the totalSales to it
           existingMonth.totalSales += entry.totalSales;
+          existingMonth.totalDelivery += entry.totalDelivery;
         } else {
           // If the month doesn't exist, add it to the accumulator
           acc.push(entry);

@@ -21,6 +21,7 @@ const OrderStatusSelect = ({ order }: any) => {
     { title: "Confirmed", value: "confirmed" },
     { title: "Shipped", value: "shipped" },
     { title: "Cancelled", value: "cancelled" },
+    { title: "Ready For Pick Up", value: "readyForPickUp" },
   ];
 
   const handleValueChange = async (newValue: string) => {
@@ -51,7 +52,7 @@ const OrderStatusSelect = ({ order }: any) => {
             </div>
           ) : (
             <span
-              className={`${currentStatus === "confirmed" && "text-green-500"} ${currentStatus === "shipped" && "text-blue-500"} ${currentStatus === "cancelled" && "text-red-500"}`}
+              className={`rounded-full px-2 py-1 text-xs font-semibold capitalize ${currentStatus === "confirmed" && "bg-green-100 text-green-600"} ${currentStatus === "shipped" && "bg-blue-100 text-blue-600"} ${currentStatus === "cancelled" && "bg-yellow-100 text-yellow-800"} ${currentStatus === "readyForPickUp" && "bg-blue-100 text-blue-600"}`}
             >
               {statuses.find((status) => status.value === currentStatus)?.title}
             </span>

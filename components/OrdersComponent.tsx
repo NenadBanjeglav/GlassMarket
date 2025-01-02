@@ -11,6 +11,7 @@ import {
 } from "./ui/tooltip";
 import PriceFormatter from "./PriceFormatter";
 import OrderDetailsDialog from "./OrderDetailsDialog";
+import OrderStatusSelect from "./OrderStatusSelect";
 
 const OrdersComponent = ({ orders }: { orders: MY_ORDERS_QUERYResult }) => {
   const [selectedOrder, setSelectedOrder] = useState<
@@ -33,22 +34,18 @@ const OrdersComponent = ({ orders }: { orders: MY_ORDERS_QUERYResult }) => {
                   className="h-12 cursor-pointer hover:bg-gray-100"
                 >
                   <TableCell className="font-medium">
-                    ...{order.orderNumber?.slice(-5) ?? "N/A"}
+                    {order.orderNumber?.slice(-5)}
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">
+                  <TableCell>
                     {order._createdAt &&
                       new Date(order._createdAt).toLocaleDateString("sr-Latn", {
-                        day: "numeric",
+                        day: "2-digit",
                         month: "2-digit",
-                        year: "numeric",
+                        year: "2-digit",
                       })}
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {order.customerName}
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {order.email}
-                  </TableCell>
+                  <TableCell>{order.customerName}</TableCell>
+                  <TableCell>{order.email}</TableCell>
                   <TableCell>
                     <PriceFormatter
                       amount={order.totalPrice}
@@ -56,15 +53,7 @@ const OrdersComponent = ({ orders }: { orders: MY_ORDERS_QUERYResult }) => {
                     />
                   </TableCell>
                   <TableCell>
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs font-semibold capitalize ${
-                        order.status === "confirmed"
-                          ? "bg-green-100 text-green-600"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
-                      {order.status === "confirmed" ? "potvrđeno" : "poslato"}
-                    </span>
+                    <OrderStatusSelect order={order} />
                   </TableCell>
                 </TableRow>
               </TooltipTrigger>
