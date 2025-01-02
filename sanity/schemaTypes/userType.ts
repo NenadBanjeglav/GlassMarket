@@ -82,6 +82,17 @@ export const userType = defineType({
       validation: (Rule) => Rule.required(),
       initialValue: () => new Date().toISOString(),
     }),
+    defineField({
+      name: "userStatus",
+      title: "User Status",
+      type: "string",
+      options: {
+        list: [
+          { title: "Active", value: "active" },
+          { title: "Banned", value: "banned" },
+        ],
+      },
+    }),
   ],
   preview: {
     select: {

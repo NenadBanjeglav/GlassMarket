@@ -29,11 +29,11 @@ const OrdersComponent = ({ orders }: { orders: MY_ORDERS_QUERYResult }) => {
           {orders.map((order) => (
             <Tooltip key={order.orderNumber}>
               <TooltipTrigger asChild>
-                <TableRow
-                  onClick={() => handleOrderClicked(order)}
-                  className="h-12 cursor-pointer hover:bg-gray-100"
-                >
-                  <TableCell className="font-medium">
+                <TableRow className="h-12 cursor-pointer hover:bg-gray-100">
+                  <TableCell
+                    className="font-medium"
+                    onClick={() => handleOrderClicked(order)}
+                  >
                     {order.orderNumber?.slice(-5)}
                   </TableCell>
                   <TableCell>
@@ -58,7 +58,7 @@ const OrdersComponent = ({ orders }: { orders: MY_ORDERS_QUERYResult }) => {
                 </TableRow>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Kliknite da vidite detalje narudžbine</p>
+                <p>Kliknite na BROJ porudzbine da biste vidite detalje</p>
               </TooltipContent>
             </Tooltip>
           ))}

@@ -71,6 +71,7 @@ export type User = {
     [internalGroqTypeReferenceTo]?: "order";
   }>;
   createdAt?: string;
+  userStatus?: "active" | "banned";
 };
 
 export type PdfFile = {
@@ -146,7 +147,7 @@ export type Order = {
     _key: string;
   }>;
   createdAt?: string;
-  status?: "confirmed" | "shipped" | "cancelled";
+  status?: "confirmed" | "shipped" | "cancelled" | "readyForPickUp";
 };
 
 export type Product = {
@@ -770,7 +771,7 @@ export type MY_ORDERS_QUERYResult = Array<{
     _key: string;
   }> | null;
   createdAt?: string;
-  status?: "cancelled" | "confirmed" | "shipped";
+  status?: "cancelled" | "confirmed" | "readyForPickUp" | "shipped";
 }>;
 // Variable: ALL_ORDERS_QUERY
 // Query: *[      _type == "order"  ] | order(_createdAt desc) {      ...,      products[]{          ...,          product->      }  }
@@ -844,7 +845,36 @@ export type ALL_ORDERS_QUERYResult = Array<{
     _key: string;
   }> | null;
   createdAt?: string;
-  status?: "cancelled" | "confirmed" | "shipped";
+  status?: "cancelled" | "confirmed" | "readyForPickUp" | "shipped";
+}>;
+// Variable: ALL_USERS_QUERY
+// Query: *[    _type == "user"  ] | order(_createdAt desc) {    ...,    orders[] {      ...,      order->     }  }
+export type ALL_USERS_QUERYResult = Array<{
+  _id: string;
+  _type: "user";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  clerkUserId?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  address?: {
+    city?: string;
+    street?: string;
+    postalCode?: string;
+  };
+  companyName?: string;
+  pib?: string;
+  orders: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    order: null;
+  }> | null;
+  createdAt?: string;
+  userStatus?: "active" | "banned";
 }>;
 // Variable: RETURN_FORM_QUERY
 // Query: *[_type == "pdfFile"]{      title,      "url": file.asset->url    }
@@ -883,6 +913,7 @@ declare module "@sanity/client" {
     "*[_type == \"category\"] | order(name asc)": CATEGORIES_QUERYResult;
     "\n  *[\n      _type == \"order\" && clerkUserId == $userId\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": MY_ORDERS_QUERYResult;
     "\n  *[\n      _type == \"order\"\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": ALL_ORDERS_QUERYResult;
+    "\n  *[\n    _type == \"user\"\n  ] | order(_createdAt desc) {\n    ...,\n    orders[] {\n      ...,\n      order-> \n    }\n  }\n": ALL_USERS_QUERYResult;
     "\n*[_type == \"pdfFile\"]{\n      title,\n      \"url\": file.asset->url\n    }\n  ": RETURN_FORM_QUERYResult;
     "\n  count(*[_type == \"order\"])\n": ALL_ORDERS_COUNT_QUERYResult;
     "\n  count(*[_type == \"product\"])\n": ALL_PRODUCTS_COUNT_QUERYResult;

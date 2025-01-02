@@ -1,6 +1,6 @@
 import React from "react";
 
-import { getAllOrders, getOrderSummary } from "@/sanity/helpers";
+import { getAllOrders, getAllUsers, getOrderSummary } from "@/sanity/helpers";
 import Container from "@/components/Container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Banknote, Barcode, CreditCard, User } from "lucide-react";
@@ -10,10 +10,15 @@ import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Charts } from "@/components/Charts";
 import OrdersComponent from "@/components/OrdersComponent";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import UsersComponent from "@/components/UsersComponent";
 
 const AdminPage = async () => {
   const summary = await getOrderSummary();
   const allOrders = await getAllOrders();
+  const allUsers = await getAllUsers();
+
+  console.log(allUsers);
+
   return (
     <main className=" overflow-x-hidden bg-white">
       <Container>
@@ -50,7 +55,7 @@ const AdminPage = async () => {
               <CreditCard />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{summary.ordersCount}</div>
+              <div className="text-2xl font-bold">{summary.totalOrders}</div>
             </CardContent>
           </Card>
           <Card>
@@ -95,6 +100,32 @@ const AdminPage = async () => {
                   </TableRow>
                 </TableHeader>
                 <OrdersComponent orders={allOrders} />
+              </Table>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+          </CardContent>
+        </Card>
+
+        <Card className="my-10 max-h-96 w-full overflow-y-scroll">
+          <CardHeader>
+            <CardTitle>Kupci</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="w-full">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px] md:w-auto">Kupac</TableHead>
+                    <TableHead className="w-[100px] md:w-auto">Email</TableHead>
+                    <TableHead>Telefon</TableHead>
+                    <TableHead className="w-[100px] md:w-auto">
+                      Adresa
+                    </TableHead>
+                    <TableHead>Br.Porudzbina</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <UsersComponent users={allUsers} />
               </Table>
               <ScrollBar orientation="horizontal" />
             </ScrollArea>

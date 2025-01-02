@@ -17,6 +17,12 @@ import {
 } from "@/components/ui/chart";
 import { TrendingDown, TrendingUp } from "lucide-react";
 
+interface ChartData {
+  month: string; // Format: MM/YY
+  totalDelivery: number; // Total number of deliveries
+  totalSales: number; // Total sales amount
+}
+
 const chartConfig = {
   desktop: {
     label: "Month",
@@ -28,19 +34,15 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function Charts({ chartData }: any) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sortedChartData = chartData.sort((a: any, b: any) => {
+export function Charts({ chartData }: { chartData: ChartData[] }) {
+  const sortedChartData = chartData.sort((a: ChartData, b: ChartData) => {
     const [monthA, yearA] = a.month.split("/");
     const [monthB, yearB] = b.month.split("/");
 
-    const dateA = new Date(`20${yearA}-${monthA}-01`); // Assuming 20xx format
-    const dateB = new Date(`20${yearB}-${monthB}-01`);
+    const dateA = new Date(Number(`20${yearA}`), Number(monthA) - 1, 1); // Use month index (0-11)
+    const dateB = new Date(Number(`20${yearB}`), Number(monthB) - 1, 1);
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    return dateA - dateB;
+    return dateA.getTime() - dateB.getTime(); // Compare timestamps for sorting
   });
 
   // Calculate percentage change for the last two months

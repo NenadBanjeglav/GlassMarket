@@ -17,7 +17,11 @@ import { useState } from "react";
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { createOrder, createOrUpdateUser } from "@/sanity/helpers";
+import {
+  checkUserStatus,
+  createOrder,
+  createOrUpdateUser,
+} from "@/sanity/helpers";
 import PriceFormatter from "./PriceFormatter";
 import { useForm, useWatch } from "react-hook-form";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
@@ -120,59 +124,69 @@ const OrderForm = ({ orderItems }: Props) => {
   const onSubmit = async (data: FormSchemaType) => {
     setLoading(true);
 
-    const orderNumber = crypto.randomUUID();
-    const priceOfProducts = getSubtotalPrice().subtotal;
-    const deliveryPrice =
-      data.deliveryMethod === "delivery" ? getDeliveryPrice() : 0;
-
-    const orderData = {
-      _type: "order",
-      orderNumber,
-      clerkUserId: user?.id || "",
-      customerName: `${data.name} ${data.lastname}`,
-      email: data.email,
-      phone: data.phone,
-      city: data.city,
-      street: data.street,
-      postalCode: data.postalCode,
-      paymentMethod: data.paymentMethod,
-      deliveryMethod: data.deliveryMethod,
-      companyName: data.companyName,
-      pib: data.pib,
-      message: data.message,
-      priceOfProducts: priceOfProducts,
-      deliveryPrice: deliveryPrice,
-      totalPrice: priceOfProducts + deliveryPrice,
-      products: orderItems.map(({ product }) => ({
-        _key: product._id,
-        product: {
-          _type: "reference",
-          _ref: product._id,
-        },
-        quantity: getItemCount(product._id),
-      })),
-      createdAt: new Date().toISOString(),
-      status: "confirmed",
-    };
-
-    const orderDataForPdf = {
-      ...orderData,
-      products: orderItems.map(({ product }) => ({
-        _key: product._id,
-        quantity: getItemCount(product._id),
-        product: {
-          _type: "product",
-          _id: product._id,
-          name: product.name,
-          price: product.price,
-          discount: product.discount ?? 0,
-          weight: product.weight,
-          image: product.image,
-        },
-      })),
-    };
-
     try {
+      const isBanned = await checkUserStatus(data.email);
+      console.log(isBanned);
+      if (isBanned) {
+        toast.error(
+          "Vaša email adresa je blokirana. Molimo kontaktirajte podršku."
+        );
+        setLoading(false);
+        return;
+      }
+
+      const orderNumber = crypto.randomUUID();
+      const priceOfProducts = getSubtotalPrice().subtotal;
+      const deliveryPrice =
+        data.deliveryMethod === "delivery" ? getDeliveryPrice() : 0;
+
+      const orderData = {
+        _type: "order",
+        orderNumber,
+        clerkUserId: user?.id || "",
+        customerName: `${data.name} ${data.lastname}`,
+        email: data.email,
+        phone: data.phone,
+        city: data.city,
+        street: data.street,
+        postalCode: data.postalCode,
+        paymentMethod: data.paymentMethod,
+        deliveryMethod: data.deliveryMethod,
+        companyName: data.companyName,
+        pib: data.pib,
+        message: data.message,
+        priceOfProducts: priceOfProducts,
+        deliveryPrice: deliveryPrice,
+        totalPrice: priceOfProducts + deliveryPrice,
+        products: orderItems.map(({ product }) => ({
+          _key: product._id,
+          product: {
+            _type: "reference",
+            _ref: product._id,
+          },
+          quantity: getItemCount(product._id),
+        })),
+        createdAt: new Date().toISOString(),
+        status: "confirmed",
+      };
+
+      const orderDataForPdf = {
+        ...orderData,
+        products: orderItems.map(({ product }) => ({
+          _key: product._id,
+          quantity: getItemCount(product._id),
+          product: {
+            _type: "product",
+            _id: product._id,
+            name: product.name,
+            price: product.price,
+            discount: product.discount ?? 0,
+            weight: product.weight,
+            image: product.image,
+          },
+        })),
+      };
+
       const result = await createOrder(orderData);
 
       if (!result.success) {

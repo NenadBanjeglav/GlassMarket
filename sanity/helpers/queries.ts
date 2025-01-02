@@ -79,6 +79,18 @@ export const ALL_ORDERS_QUERY = defineQuery(`
   }
   `);
 
+export const ALL_USERS_QUERY = defineQuery(`
+  *[
+    _type == "user"
+  ] | order(_createdAt desc) {
+    ...,
+    orders[] {
+      ...,
+      order-> 
+    }
+  }
+`);
+
 export const RETURN_FORM_QUERY = defineQuery(`
 *[_type == "pdfFile"]{
       title,

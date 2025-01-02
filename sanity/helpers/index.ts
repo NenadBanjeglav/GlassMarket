@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 "use server";
 
 import { Product } from "@/sanity.types";
@@ -10,6 +8,7 @@ import {
   ALL_PRODUCT_QUERY,
   ALL_PRODUCTS_COUNT_QUERY,
   ALL_USERS_COUNT_QUERY,
+  ALL_USERS_QUERY,
   CATEGORIES_QUERY,
   HERO_QUERY,
   MY_ORDERS_QUERY,
@@ -121,6 +120,7 @@ export const getProductsByCategory = async (categorySlug: string) => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createOrder(orderData: any) {
   try {
     const newOrder = await backendClient.create({
@@ -207,6 +207,7 @@ export const getReturnForm = async () => {
 };
 
 export async function createOrUpdateUser(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   userData: any,
   orderRef: string,
   orderNumber: string
@@ -235,6 +236,7 @@ export async function createOrUpdateUser(
       const newUser = {
         _type: "user",
         ...userData,
+        userStatus: "active",
         orders: [
           {
             _type: "reference",
@@ -278,13 +280,50 @@ export const getUserCount = async () => {
   }
 };
 
-type SalesDataType = Array<{
+export const getAllUsers = async () => {
+  try {
+    const users = await sanityFetch({
+      query: ALL_USERS_QUERY,
+    });
+    return users.data || [];
+  } catch (error) {
+    console.error(`Fetching users Error:`, error);
+    return [];
+  }
+};
+
+// Interface for a single order
+export interface OrderType {
+  createdAt?: string;
+  totalPrice?: number;
+  deliveryPrice?: number;
+  priceOfProducts?: number;
+}
+
+// Type for an array of sales data entries
+export type SalesDataType = Array<{
   month: string;
   totalSales: number;
   totalDelivery: number;
 }>;
 
-export const getSalesSummary = async () => {
+// Interface for the sales summary
+export interface SalesSummaryType {
+  totalSales: number;
+  totalDelivery: number;
+  totalPriceOfProducts: number;
+  totalOrders: number;
+  recentOrders: OrderType[];
+  salesData: SalesDataType;
+}
+
+// Interface for the result of the order summary
+export interface OrderSummaryType extends SalesSummaryType {
+  productCount: number;
+  userCount: number;
+}
+
+export const getSalesSummary = async (): Promise<SalesSummaryType> => {
   const today = new Date();
   const threeDaysAgo = new Date(today);
   threeDaysAgo.setDate(today.getDate() - 3);
@@ -296,109 +335,80 @@ export const getSalesSummary = async () => {
       query: ALL_ORDERS_QUERY,
     });
 
-    const filteredOrders = orders.data.filter((order: any) => {
-      const orderDate = new Date(order.createdAt);
-      return orderDate >= sixMonthsAgo && orderDate <= today;
-    });
-
-    const salesData: SalesDataType = filteredOrders
-      .map((entry: any) => {
-        const month = new Date(entry.createdAt).toLocaleDateString("en-GB", {
+    // Reduce orders for summary and sales data
+    const summary = orders.data.reduce(
+      (acc, order) => {
+        if (!order.createdAt) {
+          return acc;
+        }
+        const orderDate = new Date(order.createdAt);
+        const month = orderDate.toLocaleDateString("en-GB", {
           month: "2-digit",
           year: "2-digit",
         });
 
-        return {
-          month,
-          totalSales: entry.totalPrice,
-          totalDelivery: entry.deliveryPrice,
-        };
-      })
-      .reduce((acc: SalesDataType, entry: any) => {
-        // Check if the month already exists in the accumulator
-        const existingMonth = acc.find((item) => item.month === entry.month);
+        // Update recent orders
+        if (orderDate >= threeDaysAgo && orderDate <= today) {
+          acc.recentOrders.push(order);
+        }
 
+        // Update totals
+        acc.totalSales += order.totalPrice || 0;
+        acc.totalDelivery += order.deliveryPrice || 0;
+        acc.totalPriceOfProducts += order.priceOfProducts || 0;
+
+        // Update monthly sales data
+        const existingMonth = acc.salesData.find(
+          (item) => item.month === month
+        );
         if (existingMonth) {
-          // If the month exists, add the totalSales to it
-          existingMonth.totalSales += entry.totalSales;
-          existingMonth.totalDelivery += entry.totalDelivery;
+          existingMonth.totalSales += order.totalPrice || 0;
+          existingMonth.totalDelivery += order.deliveryPrice || 0;
         } else {
-          // If the month doesn't exist, add it to the accumulator
-          acc.push(entry);
+          acc.salesData.push({
+            month,
+            totalSales: order.totalPrice || 0,
+            totalDelivery: order.deliveryPrice || 0,
+          });
         }
 
         return acc;
-      }, []);
-
-    // Sum up the priceOfProducts values
-
-    const totalSales = orders.data.reduce(
-      (sum: number, order: any) => sum + (order.totalPrice || 0),
-      0
+      },
+      {
+        totalSales: 0,
+        totalDelivery: 0,
+        totalPriceOfProducts: 0,
+        totalOrders: orders.data.length,
+        recentOrders: [] as OrderType[],
+        salesData: [] as SalesDataType,
+      }
     );
 
-    const totalDelivery = orders.data.reduce(
-      (sum: number, order: any) => sum + (order.deliveryPrice || 0),
-      0
-    );
-
-    const totalPriceOfProducts = orders.data.reduce(
-      (sum: number, order: any) => sum + (order.priceOfProducts || 0),
-      0
-    );
-
-    const totalOrders = orders.data.length;
-
-    const recentOrders = orders.data.filter((order: any) => {
-      const orderDate = new Date(order.createdAt);
-      return orderDate >= threeDaysAgo && orderDate <= today;
-    });
-
-    return {
-      totalSales,
-      totalDelivery,
-      salesData,
-      totalOrders,
-      recentOrders,
-      totalPriceOfProducts,
-    };
+    return summary;
   } catch (error) {
     console.error(`Fetching total sales error:`, error);
-    return 0; // Return 0 in case of an error
+    throw new Error("Failed to fetch sales summary.");
   }
 };
 
 export const getOrderSummary = async () => {
-  const productCount = await getProductCount();
-  const userCount = await getUserCount();
-  const salesSummary = await getSalesSummary();
+  try {
+    const productCount = await getProductCount();
+    const userCount = await getUserCount();
+    const salesSummary = await getSalesSummary();
 
-  return {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    productCount: productCount.data,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    userCount: userCount.data,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    ordersCount: salesSummary.totalOrders,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    totalSales: salesSummary.totalSales,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    totalDelivery: salesSummary.totalDelivery,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    totalPriceOfProducts: salesSummary.totalPriceOfProducts,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    salesData: salesSummary.salesData,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    recentOrders: salesSummary.recentOrders,
-  };
+    const productCountData = productCount === 0 ? 0 : productCount.data;
+    const userCountData = userCount === 0 ? 0 : userCount.data;
+
+    return {
+      productCount: productCountData,
+      userCount: userCountData,
+      ...salesSummary,
+    };
+  } catch (error) {
+    console.error(`Fetching order summary error:`, error);
+    throw new Error("Failed to fetch order summary.");
+  }
 };
 
 export const updateOrderStatus = async (
@@ -418,5 +428,40 @@ export const updateOrderStatus = async (
     revalidatePath("/admin");
   } catch (error) {
     console.error("Failed to update order status:", error);
+  }
+};
+
+export const updateUserStatus = async (email: string, newStatus: string) => {
+  try {
+    // Find the user by email and update their status
+    await backendClient
+      .patch({
+        query: '*[_type == "user" && email == $email]',
+        params: { email },
+      })
+      .set({ userStatus: newStatus })
+      .commit();
+
+    // Optionally revalidate any paths that depend on user data
+    revalidatePath("/admin"); // Adjust the path based on your application structure
+  } catch (error) {
+    console.error("Failed to update user status:", error);
+  }
+};
+
+export const checkUserStatus = async (email: string): Promise<boolean> => {
+  try {
+    const query = '*[_type == "user" && email == $email][0]';
+    const user = await backendClient.fetch(query, { email });
+
+    // Check if user exists and if the status is "banned"
+    if (user && user.userStatus === "banned") {
+      return true; // User is banned
+    }
+
+    return false; // User is not banned
+  } catch (error) {
+    console.error("Failed to check user status:", error);
+    return false;
   }
 };

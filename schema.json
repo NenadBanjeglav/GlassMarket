@@ -346,6 +346,23 @@
           "type": "string"
         },
         "optional": true
+      },
+      "userStatus": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "active"
+            },
+            {
+              "type": "string",
+              "value": "banned"
+            }
+          ]
+        },
+        "optional": true
       }
     }
   },
@@ -825,6 +842,10 @@
             {
               "type": "string",
               "value": "cancelled"
+            },
+            {
+              "type": "string",
+              "value": "readyForPickUp"
             }
           ]
         },
