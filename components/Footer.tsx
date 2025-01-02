@@ -118,7 +118,7 @@ const Footer = async () => {
               <div className="hoverEffect  flex items-center gap-1 rounded-md border border-gray-200 px-2 py-1 shadow-md hover:shadow-none">
                 <SignInButton mode="modal">
                   <div className="flex gap-1">
-                    <span className="hidden text-xs font-thin md:inline-block">
+                    <span className="text-xs font-thin md:inline-block">
                       Admin
                     </span>
                   </div>
