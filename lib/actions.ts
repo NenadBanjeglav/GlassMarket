@@ -22,7 +22,7 @@ export interface OrderEmailValues {
   productTotal: number;
   deliveryTotal: number;
   grandTotal: number;
-  pdfBase64: string; // Base64-encoded PDF string
+  pdfBase64: string;
 }
 
 export async function sendOrderEmailWithPDF(values: OrderEmailValues) {
