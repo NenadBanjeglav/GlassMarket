@@ -30,27 +30,26 @@ import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { pdf } from "@react-pdf/renderer";
 import { InvoiceDocument } from "./InvoiceDocument";
+import { OrderEmailValues, sendOrderEmailWithPDF } from "@/lib/actions";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function generateAndDownloadPDF(orderData: any) {
-  // 1) Generate PDF blob from your InvoiceDocument
+  // 1) Generate PDF Blob from your InvoiceDocument
   const blob = await pdf(<InvoiceDocument orderData={orderData} />).toBlob();
 
-  // 2) Create a URL from the blob
-  const url = URL.createObjectURL(blob);
+  // 2) Return the generated Blob
+  return blob;
+}
 
-  // 3) Create a temporary link element
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `Porudzbenica_${orderData.orderNumber}.pdf`;
-
-  // 4) Append to the DOM, trigger click, and remove
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-
-  // 5) Release the object URL
-  URL.revokeObjectURL(url);
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      resolve(reader.result?.toString().split(",")[1] ?? ""); // Extract base64 string
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
 }
 
 const formSchema = z.object({
@@ -218,7 +217,39 @@ const OrderForm = ({ orderItems }: Props) => {
         router.push(
           `/success?orderNumber=${orderNumber.slice(-5)}&deliveryMethod=${deliveryMethod}&paymentMethod=${paymentMethod}`
         );
-        await generateAndDownloadPDF(orderDataForPdf);
+        const pdfBlob = await generateAndDownloadPDF(orderDataForPdf);
+
+        const pdfBase64 = await blobToBase64(pdfBlob);
+
+        const emailValues: OrderEmailValues = {
+          orderNumber: orderNumber.slice(-5),
+          orderDate: new Date().toLocaleDateString("sr-Latn"),
+          customerName: `${data.name} ${data.lastname}`,
+          customerEmail: data.email,
+          customerPhone: data.phone,
+          customerAddress: `${data.street}, ${data.city}`,
+          paymentMethod:
+            data.paymentMethod === "bankTransfer"
+              ? "Direktna bankovna transakcija"
+              : "Plaćanje prilikom preuzimanja",
+          deliveryMethod:
+            data.deliveryMethod === "store"
+              ? "Preuzimanje u prodavnici"
+              : "Dostava kurirskom službom",
+          products: orderItems.map(({ product }) => ({
+            name: product.name ?? "Unknown Product", // Fallback for undefined name
+            price: product.price ?? 0, // Fallback for undefined price
+            quantity: getItemCount(product._id),
+            total: (product.price ?? 0) * getItemCount(product._id),
+            image: product.image ? urlFor(product.image).url() : undefined,
+          })),
+          productTotal: priceOfProducts,
+          deliveryTotal: deliveryPrice,
+          grandTotal: priceOfProducts + deliveryPrice,
+          pdfBase64,
+        };
+
+        await sendOrderEmailWithPDF(emailValues);
       } else {
         throw new Error(result.error);
       }
