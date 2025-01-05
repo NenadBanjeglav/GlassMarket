@@ -17,8 +17,6 @@ const AdminPage = async () => {
   const allOrders = await getAllOrders();
   const allUsers = await getAllUsers();
 
-  console.log(allUsers);
-
   return (
     <main className=" overflow-x-hidden bg-white">
       <Container>

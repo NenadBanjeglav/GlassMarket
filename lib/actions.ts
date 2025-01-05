@@ -2,6 +2,7 @@
 
 import { Resend } from "resend";
 import { OrderEmail } from "@/components/resend/order-email";
+import { StatusUpdateEmail } from "@/components/resend/status-update-email";
 
 export interface OrderEmailValues {
   orderNumber: string;
@@ -48,5 +49,27 @@ export async function sendOrderEmailWithPDF(values: OrderEmailValues) {
   } catch (error) {
     console.error("Error sending email with PDF:", error);
     throw new Error("Failed to send email with PDF");
+  }
+}
+
+export async function sendOrderStatusEmailUpdate(
+  orderNumber: string,
+  newStatus: string,
+  customerEmail: string,
+  customerName: string
+) {
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  try {
+    await resend.emails.send({
+      from: "no-reply@glassmarket.dev",
+      to: [customerEmail],
+      subject: `Ažuriranje statusa narudžbine #${orderNumber}`,
+      react: StatusUpdateEmail({ customerName, orderNumber, newStatus }),
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error sending order status update Email:", error);
+    throw new Error("Failed to send order status update!");
   }
 }

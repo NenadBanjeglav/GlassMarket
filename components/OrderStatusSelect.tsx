@@ -11,11 +11,13 @@ import {
 import { updateOrderStatus } from "@/sanity/helpers";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
+import { sendOrderStatusEmailUpdate } from "@/lib/actions";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const OrderStatusSelect = ({ order }: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentStatus, setCurrentStatus] = useState(order.status);
+  console.log(order);
 
   const statuses = [
     { title: "Confirmed", value: "confirmed" },
@@ -29,6 +31,12 @@ const OrderStatusSelect = ({ order }: any) => {
       setIsLoading(true);
       await updateOrderStatus(order.orderNumber, newValue);
       setCurrentStatus(newValue);
+      await sendOrderStatusEmailUpdate(
+        order.orderNumber.slice(-5),
+        newValue,
+        order.email,
+        order.customerName
+      );
       toast.success("Uspesno promenjen status porudzbine");
     } catch (error) {
       console.error(`Error changing order Status.`, error);
