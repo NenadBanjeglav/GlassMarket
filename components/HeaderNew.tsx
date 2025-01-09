@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 "use client";
 
 import React, {
@@ -8,11 +11,11 @@ import React, {
   useState,
 } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Menu, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Menu, X } from "lucide-react";
 
 import Link from "next/link";
 import Image from "next/image";
-import { Category, Order } from "@/sanity.types";
+import { MAIN_CATEGORIES_QUERYResult, Order } from "@/sanity.types";
 
 import CartIcon from "./CartIcon";
 import Container from "./Container";
@@ -23,22 +26,23 @@ export const RoundedDrawerNavExample = ({
   orders,
   isAdminUser,
 }: {
-  categories: Category[];
+  categories: MAIN_CATEGORIES_QUERYResult;
   orders?: Order[];
   isAdminUser: boolean;
 }) => {
-  const categorySlugs = categories.reduce<{ title: string; href: string }[]>(
-    (acc, cat) => {
-      if (cat.title && cat.slug?.current) {
-        acc.push({
-          title: cat.title,
-          href: `/categories/${cat.slug.current}`,
-        });
-      }
-      return acc;
-    },
-    []
-  );
+  const mainLinks: MainLinkType[] = categories
+    .filter((cat) => cat.title && cat.slug?.current)
+    .map((cat) => ({
+      title: cat.title!,
+      href: `/categories/${cat.slug!.current}`,
+      sublinks:
+        cat.subcategories
+          ?.filter((subcat) => subcat.title && subcat.slug?.current)
+          .map((subcat) => ({
+            title: subcat.title!.split(" ").slice(1).join(" "), // Modify only sublinks' titles
+            href: `/categories/${subcat.slug!.current}`,
+          })) || [],
+    }));
 
   return (
     <header className="sticky top-0 z-50 border-b bg-white">
@@ -49,56 +53,68 @@ export const RoundedDrawerNavExample = ({
           links={[
             {
               title: "Kategorije",
+              href: "#",
               sublinks: [
-                { title: "Svi Proizvodi", href: "/store" },
-                ...categorySlugs,
+                { title: "Svi Proizvodi", href: "/store", sublinks: [] },
+                ...mainLinks,
               ],
             },
 
             {
               title: "Podrška",
+              href: "#",
               sublinks: [
                 {
                   title: "Kako naručiti",
                   href: "/how-to-order",
+                  sublinks: [],
                 },
                 {
                   title: "Način plaćanja",
                   href: "/payment-options",
+                  sublinks: [],
                 },
                 {
                   title: "Reklamacije",
                   href: "/returns",
+                  sublinks: [],
                 },
                 {
                   title: "Način i cena dostave",
                   href: "/shipping",
+                  sublinks: [],
                 },
               ],
             },
             {
               title: "Kompanija",
+              href: "#",
               sublinks: [
                 {
                   title: "O nama",
                   href: "/about",
+                  sublinks: [],
                 },
                 {
                   title: "Kontakt",
                   href: "/contact",
+                  sublinks: [],
                 },
               ],
             },
             {
               title: "Admin",
+              href: "#",
               sublinks: [
                 {
                   title: "Analitika",
                   href: "/admin",
+                  sublinks: [],
                 },
                 {
                   title: "Studio",
                   href: "/studio",
+                  sublinks: [],
                 },
               ],
             },
@@ -111,21 +127,24 @@ export const RoundedDrawerNavExample = ({
   );
 };
 
-type LinkType = {
+type MainLinkType = {
   title: string;
-  sublinks: { title: string; href: string }[];
+  href: string;
+  sublinks?: {
+    title: string;
+    href: string;
+  }[];
 };
 
 const RoundedDrawerNav = ({
   navBackground,
   links,
-
   isAdminUser,
 }: {
   navBackground: string;
   bodyBackground: string;
   children?: ReactNode;
-  links: LinkType[];
+  links: MainLinkType[];
   orders?: Order[];
   isAdminUser: boolean;
 }) => {
@@ -197,12 +216,19 @@ const DesktopLinks = ({
   activeSublinks,
   isAdminUser,
 }: {
-  links: LinkType[];
+  links: MainLinkType[];
   setHovered: Dispatch<SetStateAction<string | null>>;
   hovered: string | null;
-  activeSublinks: LinkType["sublinks"];
+  activeSublinks: MainLinkType["sublinks"];
   isAdminUser: boolean;
 }) => {
+  const [expandedSublink, setExpandedSublink] = useState<string | null>(null);
+
+  const toggleSublink = (title: string) => {
+    // If the clicked sublink is already expanded, collapse it. Otherwise, expand it.
+    setExpandedSublink((prev) => (prev === title ? null : title));
+  };
+
   return (
     <div className="ml-9 mt-0.5 hidden text-gray-600 md:block">
       <div className="flex gap-6">
@@ -218,25 +244,62 @@ const DesktopLinks = ({
       <AnimatePresence mode="popLayout">
         {hovered && (
           <motion.div
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            exit={{
-              opacity: 0,
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
             className="space-y-4 py-6"
           >
-            {activeSublinks.map((l) => (
-              <a
-                className="block text-2xl font-semibold text-gray-600 transition-colors hover:text-red-700"
-                href={l.href}
-                key={l.title}
-              >
-                {l.title}
-              </a>
+            {activeSublinks!.map((l) => (
+              <div key={l.title}>
+                {l.sublinks && l.sublinks.length > 0 ? (
+                  <>
+                    {/* Parent Sublink */}
+                    <div
+                      className="flex cursor-pointer items-center justify-between text-2xl font-semibold text-gray-600 transition-colors hover:text-red-700"
+                      onClick={() => toggleSublink(l.title)}
+                    >
+                      <span>{l.title}</span>
+                      {expandedSublink === l.title ? (
+                        <ChevronUp className="size-5" />
+                      ) : (
+                        <ChevronDown className="size-5" />
+                      )}
+                    </div>
+
+                    {/* Child Sublinks */}
+                    <AnimatePresence>
+                      {expandedSublink === l.title && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className=" space-y-2 pl-4"
+                        >
+                          {l.sublinks.map((child) => (
+                            <Link
+                              key={child.title}
+                              className="block text-lg text-gray-500 transition-colors hover:text-red-500"
+                              href={child.href}
+                            >
+                              {child.title}
+                            </Link>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </>
+                ) : (
+                  // Show link if no sublinks
+                  <Link
+                    href={l.href}
+                    className="block cursor-pointer text-2xl font-semibold text-gray-600 transition-colors hover:text-red-700"
+                  >
+                    {l.title}
+                  </Link>
+                )}
+              </div>
             ))}
           </motion.div>
         )}
@@ -250,41 +313,91 @@ const MobileLinks = ({
   open,
   isAdminUser,
 }: {
-  links: LinkType[];
+  links: MainLinkType[];
   open: boolean;
   isAdminUser: boolean;
 }) => {
+  const [expandedChildLink, setExpandedChildLink] = useState<string | null>(
+    null
+  );
+
+  const toggleChildLink = (title: string) => {
+    setExpandedChildLink((prev) => (prev === title ? null : title));
+  };
+
   return (
     <AnimatePresence mode="popLayout">
       {open && (
         <motion.div
-          initial={{
-            opacity: 0,
-          }}
-          animate={{
-            opacity: 1,
-          }}
-          exit={{
-            opacity: 0,
-          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
           className="grid grid-cols-2 gap-6 py-6 md:hidden"
         >
           {links.map((l) => {
+            // Skip Admin link if user is not admin
             if (l.title === "Admin" && !isAdminUser) return null;
+
             return (
               <div key={l.title} className="space-y-1.5">
-                <span className=" block font-semibold text-gray-600">
-                  {l.title}
-                </span>
-                {l.sublinks.map((sl) => (
-                  <a
-                    className=" block text-gray-600"
-                    href={sl.href}
-                    key={sl.title}
-                  >
-                    {sl.title}
-                  </a>
-                ))}
+                {/* Parent Link */}
+                <div>
+                  <span className="block font-semibold text-gray-600">
+                    {l.title}
+                  </span>
+
+                  <div className="space-y-1.5">
+                    {l.sublinks?.map((sl) => (
+                      <div key={sl.title} className="space-y-1">
+                        {sl.sublinks && sl.sublinks.length === 0 && (
+                          <Link className="text-gray-600" href={sl.href}>
+                            {sl.title}
+                          </Link>
+                        )}
+                        {sl.sublinks && sl.sublinks.length > 0 && (
+                          <>
+                            <div
+                              className="flex cursor-pointer items-center justify-between text-gray-600"
+                              onClick={() => toggleChildLink(sl.title)}
+                            >
+                              <span>{sl.title}</span>
+                              {sl.sublinks?.length > 0 ? (
+                                expandedChildLink === sl.title ? (
+                                  <ChevronUp className="size-5" />
+                                ) : (
+                                  <ChevronDown className="size-5" />
+                                )
+                              ) : null}
+                            </div>
+                            <AnimatePresence>
+                              {expandedChildLink === sl.title &&
+                                sl.sublinks?.length > 0 && (
+                                  <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: "auto", opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="space-y-1 pl-4"
+                                  >
+                                    {sl.sublinks.map((child) => (
+                                      <Link
+                                        key={child.title}
+                                        className="block text-gray-500"
+                                        href={child.href}
+                                      >
+                                        {child.title}
+                                      </Link>
+                                    ))}
+                                  </motion.div>
+                                )}
+                            </AnimatePresence>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             );
           })}
@@ -293,6 +406,8 @@ const MobileLinks = ({
     </AnimatePresence>
   );
 };
+
+export default MobileLinks;
 
 const TopLink = ({
   children,

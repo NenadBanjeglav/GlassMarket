@@ -51,8 +51,13 @@ export const PRODUCT_BY_CATEGORY_QUERY = defineQuery(
   `*[_type == "product" && references(*[_type == "category" && slug.current == $categorySlug]._id)] | order(name asc)`
 );
 
-export const CATEGORIES_QUERY = defineQuery(
-  `*[_type == "category"] | order(name asc)`
+export const MAIN_CATEGORIES_QUERY = defineQuery(
+  `*[_type == "category" && isMainCategory == true] | order(title asc) {
+    ...,
+    "subcategories": subcategories[]->{
+      ...
+    }
+  }`
 );
 
 export const MY_ORDERS_QUERY = defineQuery(`

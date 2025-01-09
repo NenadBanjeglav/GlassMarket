@@ -25,6 +25,13 @@ export const categoryType = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "isMainCategory",
+      title: "Is Main Category",
+      type: "boolean",
+      description: "Check this if this is a main category",
+      initialValue: false, // Default value set to false
+    }),
+    defineField({
       name: "description",
       title: "Description",
       type: "text",
@@ -36,7 +43,6 @@ export const categoryType = defineType({
       options: {
         hotspot: true,
       },
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "subcategories",

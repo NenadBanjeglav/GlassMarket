@@ -225,6 +225,7 @@ export type Category = {
   _rev: string;
   title?: string;
   slug?: Slug;
+  isMainCategory?: boolean;
   description?: string;
   image?: {
     asset?: {
@@ -309,7 +310,24 @@ export type Slug = {
   source?: string;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | Geopoint | User | PdfFile | SanityFileAsset | Order | Product | Hero | Category | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Slug;
+export type AllSanitySchemaTypes =
+  | SanityImagePaletteSwatch
+  | SanityImagePalette
+  | SanityImageDimensions
+  | Geopoint
+  | User
+  | PdfFile
+  | SanityFileAsset
+  | Order
+  | Product
+  | Hero
+  | Category
+  | SanityImageCrop
+  | SanityImageHotspot
+  | SanityImageAsset
+  | SanityAssetSourceData
+  | SanityImageMetadata
+  | Slug;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/helpers/queries.ts
 // Variable: HERO_QUERY
@@ -669,9 +687,9 @@ export type PRODUCT_BY_CATEGORY_QUERYResult = Array<{
     [internalGroqTypeReferenceTo]?: "product";
   }>;
 }>;
-// Variable: CATEGORIES_QUERY
-// Query: *[_type == "category"] | order(name asc)
-export type CATEGORIES_QUERYResult = Array<{
+// Variable: MAIN_CATEGORIES_QUERY
+// Query: *[_type == "category" && isMainCategory == true] | order(title asc) {    ...,    "subcategories": subcategories[]->{      ...    }  }
+export type MAIN_CATEGORIES_QUERYResult = Array<{
   _id: string;
   _type: "category";
   _createdAt: string;
@@ -679,6 +697,7 @@ export type CATEGORIES_QUERYResult = Array<{
   _rev: string;
   title?: string;
   slug?: Slug;
+  isMainCategory?: boolean;
   description?: string;
   image?: {
     asset?: {
@@ -691,13 +710,35 @@ export type CATEGORIES_QUERYResult = Array<{
     crop?: SanityImageCrop;
     _type: "image";
   };
-  subcategories?: Array<{
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    _key: string;
-    [internalGroqTypeReferenceTo]?: "category";
-  }>;
+  subcategories: Array<{
+    _id: string;
+    _type: "category";
+    _createdAt: string;
+    _updatedAt: string;
+    _rev: string;
+    title?: string;
+    slug?: Slug;
+    isMainCategory?: boolean;
+    description?: string;
+    image?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    };
+    subcategories?: Array<{
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      _key: string;
+      [internalGroqTypeReferenceTo]?: "category";
+    }>;
+  }> | null;
 }>;
 // Variable: MY_ORDERS_QUERY
 // Query: *[      _type == "order" && clerkUserId == $userId  ] | order(_createdAt desc) {      ...,      products[]{          ...,          product->      }  }
@@ -904,20 +945,20 @@ export type ALL_ORDERS_QUERY_SUMMARYResult = Array<{
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "\n    *[_type == \"hero\"] | order(name asc)\n    ": HERO_QUERYResult;
-    "\n  *[\n    _type == \"product\" &&\n    (!defined($categorySlug) || $categorySlug in categories[]->slug.current) &&\n    (!defined($volumeSlug) || volume <= $volumeSlug)\n  ] | order(volume desc)\n": ALL_PRODUCT_QUERYResult;
-    "*[_type == \"product\" && slug.current == $slug] | order(name asc)[0] {\n    ...,\n    \"relatedCaps\": relatedCaps[]->{\n  ...\n}\n  }": PRODUCT_BY_SLUGResult;
-    "*[_type == \"product\" && status == \"AKCIJA\"] | order(name asc) {\n    ...,\n    \"relatedCaps\": relatedCaps[]->{\n      ...\n    }\n  }": PRODUCTS_ON_SALEResult;
-    "*[_type == \"product\" && status == \"NOVO\"] | order(name asc) {\n    ...,\n    \"relatedCaps\": relatedCaps[]->{\n      ...\n    }\n  }": PRODUCTS_NEWResult;
-    "*[_type == \"product\" && references(*[_type == \"category\" && slug.current == $categorySlug]._id)] | order(name asc)": PRODUCT_BY_CATEGORY_QUERYResult;
-    "*[_type == \"category\"] | order(name asc)": CATEGORIES_QUERYResult;
-    "\n  *[\n      _type == \"order\" && clerkUserId == $userId\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": MY_ORDERS_QUERYResult;
-    "\n  *[\n      _type == \"order\"\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": ALL_ORDERS_QUERYResult;
-    "\n  *[\n    _type == \"user\"\n  ] | order(_createdAt desc) {\n    ...,\n    orders[] {\n      ...,\n      order-> \n    }\n  }\n": ALL_USERS_QUERYResult;
-    "\n*[_type == \"pdfFile\"]{\n      title,\n      \"url\": file.asset->url\n    }\n  ": RETURN_FORM_QUERYResult;
-    "\n  count(*[_type == \"order\"])\n": ALL_ORDERS_COUNT_QUERYResult;
-    "\n  count(*[_type == \"product\"])\n": ALL_PRODUCTS_COUNT_QUERYResult;
-    "\n  count(*[_type == \"user\"])\n": ALL_USERS_COUNT_QUERYResult;
-    "\n  *[_type == \"order\"] {\n      priceOfProducts,\n      deliveryPrice,\n      totalPrice,\n      createdAt,\n    }\n": ALL_ORDERS_QUERY_SUMMARYResult;
+    '\n    *[_type == "hero"] | order(name asc)\n    ': HERO_QUERYResult;
+    '\n  *[\n    _type == "product" &&\n    (!defined($categorySlug) || $categorySlug in categories[]->slug.current) &&\n    (!defined($volumeSlug) || volume <= $volumeSlug)\n  ] | order(volume desc)\n': ALL_PRODUCT_QUERYResult;
+    '*[_type == "product" && slug.current == $slug] | order(name asc)[0] {\n    ...,\n    "relatedCaps": relatedCaps[]->{\n  ...\n}\n  }': PRODUCT_BY_SLUGResult;
+    '*[_type == "product" && status == "AKCIJA"] | order(name asc) {\n    ...,\n    "relatedCaps": relatedCaps[]->{\n      ...\n    }\n  }': PRODUCTS_ON_SALEResult;
+    '*[_type == "product" && status == "NOVO"] | order(name asc) {\n    ...,\n    "relatedCaps": relatedCaps[]->{\n      ...\n    }\n  }': PRODUCTS_NEWResult;
+    '*[_type == "product" && references(*[_type == "category" && slug.current == $categorySlug]._id)] | order(name asc)': PRODUCT_BY_CATEGORY_QUERYResult;
+    '*[_type == "category" && isMainCategory == true] | order(title asc) {\n    ...,\n    "subcategories": subcategories[]->{\n      ...\n    }\n  }': MAIN_CATEGORIES_QUERYResult;
+    '\n  *[\n      _type == "order" && clerkUserId == $userId\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ': MY_ORDERS_QUERYResult;
+    '\n  *[\n      _type == "order"\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ': ALL_ORDERS_QUERYResult;
+    '\n  *[\n    _type == "user"\n  ] | order(_createdAt desc) {\n    ...,\n    orders[] {\n      ...,\n      order-> \n    }\n  }\n': ALL_USERS_QUERYResult;
+    '\n*[_type == "pdfFile"]{\n      title,\n      "url": file.asset->url\n    }\n  ': RETURN_FORM_QUERYResult;
+    '\n  count(*[_type == "order"])\n': ALL_ORDERS_COUNT_QUERYResult;
+    '\n  count(*[_type == "product"])\n': ALL_PRODUCTS_COUNT_QUERYResult;
+    '\n  count(*[_type == "user"])\n': ALL_USERS_COUNT_QUERYResult;
+    '\n  *[_type == "order"] {\n      priceOfProducts,\n      deliveryPrice,\n      totalPrice,\n      createdAt,\n    }\n': ALL_ORDERS_QUERY_SUMMARYResult;
   }
 }
