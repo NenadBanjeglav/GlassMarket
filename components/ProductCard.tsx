@@ -12,7 +12,7 @@ interface Props {
 
 const ProductCard = ({ product }: Props) => {
   return (
-    <div className="group overflow-hidden rounded-lg border border-gray-300 text-sm">
+    <div className="group overflow-hidden rounded-lg border  border-gray-300 text-sm">
       <div className="relative overflow-hidden border-b border-b-gray-300">
         {product.image && (
           <Link href={`/product/${product.slug?.current}`}>
@@ -46,11 +46,12 @@ const ProductCard = ({ product }: Props) => {
           {product.name}
           <br />
         </p>
-        <span className="line-clamp-1 text-sm text-gray-500">
+        <span className="line-clamp-1 h-4 text-sm text-gray-500">
           {product.description}
         </span>
 
         <PriceView product={product} />
+
         <AddToCartButton product={product} />
       </div>
     </div>
