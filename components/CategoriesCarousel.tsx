@@ -1,6 +1,5 @@
 "use client";
 
-import { Category } from "@/sanity.types";
 import React from "react";
 
 import Container from "./Container";
@@ -15,13 +14,13 @@ import {
   CarouselPrevious,
 } from "./ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { MAIN_CATEGORIES_QUERYResult } from "@/sanity.types";
 
-interface Props {
-  categories: Category[];
+interface CategoriesCarouselProps {
+  categories: MAIN_CATEGORIES_QUERYResult;
 }
 
-const CategoriesCarousel = ({ categories }: Props) => {
-  console.log(categories);
+const CategoriesCarousel = ({ categories }: CategoriesCarouselProps) => {
   return (
     <Container className="py-16">
       <h2 className="text-center text-2xl font-semibold uppercase text-gray-600 md:text-left">
