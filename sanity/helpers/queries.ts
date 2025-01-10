@@ -53,9 +53,11 @@ export const PRODUCT_BY_CATEGORY_QUERY = defineQuery(
 
 export const MAIN_CATEGORIES_QUERY = defineQuery(
   `*[_type == "category" && isMainCategory == true] | order(title asc) {
-    ...,
+    title,
+    slug,
     "subcategories": subcategories[]->{
-      ...
+      title,
+      slug
     }
   }`
 );

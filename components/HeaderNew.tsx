@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
 "use client";
 
 import React, {
@@ -30,19 +27,22 @@ export const RoundedDrawerNavExample = ({
   orders?: Order[];
   isAdminUser: boolean;
 }) => {
-  const mainLinks: MainLinkType[] = categories
-    .filter((cat) => cat.title && cat.slug?.current)
-    .map((cat) => ({
-      title: cat.title!,
-      href: `/categories/${cat.slug!.current}`,
-      sublinks:
-        cat.subcategories
-          ?.filter((subcat) => subcat.title && subcat.slug?.current)
-          .map((subcat) => ({
-            title: subcat.title!.split(" ").slice(1).join(" "), // Modify only sublinks' titles
-            href: `/categories/${subcat.slug!.current}`,
-          })) || [],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const transformCategories = (categories: any[]): MainLinkType[] => {
+    return categories.map((category) => ({
+      title: category.title,
+      href: `/${category.slug.current}`,
+      sublinks: category.subcategories?.map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (sub: { title: any; slug: { current: any } }) => ({
+          title: sub.title.split(" ").slice(1).join(" "),
+          href: `/categories/${sub.slug.current}`,
+        })
+      ),
     }));
+  };
+
+  const transformedCategories = transformCategories(categories);
 
   return (
     <header className="sticky top-0 z-50 border-b bg-white">
@@ -55,8 +55,8 @@ export const RoundedDrawerNavExample = ({
               title: "Kategorije",
               href: "#",
               sublinks: [
-                { title: "Svi Proizvodi", href: "/store", sublinks: [] },
-                ...mainLinks,
+                { title: "Svi Proizvodi", href: "/store" },
+                ...transformedCategories,
               ],
             },
 
@@ -67,22 +67,18 @@ export const RoundedDrawerNavExample = ({
                 {
                   title: "Kako naručiti",
                   href: "/how-to-order",
-                  sublinks: [],
                 },
                 {
                   title: "Način plaćanja",
                   href: "/payment-options",
-                  sublinks: [],
                 },
                 {
                   title: "Reklamacije",
                   href: "/returns",
-                  sublinks: [],
                 },
                 {
                   title: "Način i cena dostave",
                   href: "/shipping",
-                  sublinks: [],
                 },
               ],
             },
@@ -93,12 +89,10 @@ export const RoundedDrawerNavExample = ({
                 {
                   title: "O nama",
                   href: "/about",
-                  sublinks: [],
                 },
                 {
                   title: "Kontakt",
                   href: "/contact",
-                  sublinks: [],
                 },
               ],
             },
@@ -109,19 +103,17 @@ export const RoundedDrawerNavExample = ({
                 {
                   title: "Analitika",
                   href: "/admin",
-                  sublinks: [],
                 },
                 {
                   title: "Studio",
                   href: "/studio",
-                  sublinks: [],
                 },
               ],
             },
           ]}
           navBackground="bg-white"
           bodyBackground="bg-white"
-        ></RoundedDrawerNav>
+        />
       </Container>
     </header>
   );
@@ -130,10 +122,7 @@ export const RoundedDrawerNavExample = ({
 type MainLinkType = {
   title: string;
   href: string;
-  sublinks?: {
-    title: string;
-    href: string;
-  }[];
+  sublinks?: MainLinkType[]; // Allow for nested sublinks of the same type
 };
 
 const RoundedDrawerNav = ({
@@ -277,15 +266,18 @@ const DesktopLinks = ({
                           transition={{ duration: 0.3 }}
                           className=" space-y-2 pl-4"
                         >
-                          {l.sublinks.map((child) => (
-                            <Link
-                              key={child.title}
-                              className="block text-lg text-gray-500 transition-colors hover:text-red-500"
-                              href={child.href}
-                            >
-                              {child.title}
-                            </Link>
-                          ))}
+                          {l.sublinks.map(
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            (child: any) => (
+                              <Link
+                                key={child.title}
+                                className="block text-lg text-gray-500 transition-colors hover:text-red-500"
+                                href={child.href}
+                              >
+                                {child.title}
+                              </Link>
+                            )
+                          )}
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -350,12 +342,7 @@ const MobileLinks = ({
                   <div className="space-y-1.5">
                     {l.sublinks?.map((sl) => (
                       <div key={sl.title} className="space-y-1">
-                        {sl.sublinks && sl.sublinks.length === 0 && (
-                          <Link className="text-gray-600" href={sl.href}>
-                            {sl.title}
-                          </Link>
-                        )}
-                        {sl.sublinks && sl.sublinks.length > 0 && (
+                        {sl.sublinks && sl.sublinks.length > 0 ? (
                           <>
                             <div
                               className="flex cursor-pointer items-center justify-between text-gray-600"
@@ -393,6 +380,10 @@ const MobileLinks = ({
                                 )}
                             </AnimatePresence>
                           </>
+                        ) : (
+                          <Link className="text-gray-600" href={sl.href}>
+                            {sl.title}
+                          </Link>
                         )}
                       </div>
                     ))}
