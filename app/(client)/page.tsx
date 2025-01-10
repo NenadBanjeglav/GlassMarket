@@ -3,8 +3,8 @@ import HeroBanner from "@/components/HeroBanner";
 import ProductCarousel from "@/components/ProductCarousel";
 
 import {
-  getAllCategories,
   getHero,
+  getMainCategories,
   getProductsNew,
   getProductsOnSale,
 } from "@/sanity/helpers";
@@ -16,7 +16,7 @@ import FeaturesBanner from "@/components/FeaturesBanner";
 export default async function Home() {
   const heroes = await getHero();
   const productsSale = await getProductsOnSale();
-  const categories = await getAllCategories();
+  const categories = await getMainCategories();
   const productsNew = await getProductsNew();
 
   return (

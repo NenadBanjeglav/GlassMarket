@@ -51,15 +51,28 @@ export const PRODUCT_BY_CATEGORY_QUERY = defineQuery(
   `*[_type == "product" && references(*[_type == "category" && slug.current == $categorySlug]._id)] | order(name asc)`
 );
 
+// export const MAIN_CATEGORIES_QUERY = defineQuery(
+//   `*[_type == "category" && isMainCategory == true] | order(title asc) {
+//     title,
+//     slug,
+//     "subcategories": subcategories[]->{
+//       title,
+//       slug
+//     }
+//   }`
+// );
+
 export const MAIN_CATEGORIES_QUERY = defineQuery(
   `*[_type == "category" && isMainCategory == true] | order(title asc) {
-    title,
-    slug,
+    ...,
     "subcategories": subcategories[]->{
-      title,
-      slug
+      ...
     }
   }`
+);
+
+export const GET_ALL_CATEGORIES_QUERY = defineQuery(
+  `*[_type == 'category'] | order(title asc)`
 );
 
 export const MY_ORDERS_QUERY = defineQuery(`

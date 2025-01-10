@@ -9,6 +9,7 @@ import {
   ALL_PRODUCTS_COUNT_QUERY,
   ALL_USERS_COUNT_QUERY,
   ALL_USERS_QUERY,
+  GET_ALL_CATEGORIES_QUERY,
   HERO_QUERY,
   MAIN_CATEGORIES_QUERY,
   MY_ORDERS_QUERY,
@@ -92,7 +93,7 @@ export const getProductBySlug = async (slug: string) => {
   }
 };
 
-export const getAllCategories = async () => {
+export const getMainCategories = async () => {
   try {
     const categories = await sanityFetch({
       query: MAIN_CATEGORIES_QUERY,
@@ -100,6 +101,18 @@ export const getAllCategories = async () => {
     return categories.data || [];
   } catch (error) {
     console.error("Error fetching Main Categories data:", error);
+    return [];
+  }
+};
+
+export const getAllCategories = async () => {
+  try {
+    const categories = await sanityFetch({
+      query: GET_ALL_CATEGORIES_QUERY,
+    });
+    return categories.data || [];
+  } catch (error) {
+    console.error("Error fetching All Categories data:", error);
     return [];
   }
 };

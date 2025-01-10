@@ -30,6 +30,7 @@ const CategoryPage = async ({ params }: Props) => {
                   .join(" ")}
               </span>
             </h2>
+
             <p className="text-center text-gray-500">{category?.description}</p>
           </div>
 

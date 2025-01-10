@@ -680,6 +680,37 @@ export type MAIN_CATEGORIES_QUERYResult = Array<{
     slug: Slug | null;
   }> | null;
 }>;
+// Variable: GET_ALL_CATEGORIES_QUERY
+// Query: *[_type == 'category'] | order(title asc)
+export type GET_ALL_CATEGORIES_QUERYResult = Array<{
+  _id: string;
+  _type: "category";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  isMainCategory?: boolean;
+  description?: string;
+  image?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  subcategories?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "category";
+  }>;
+}>;
 // Variable: MY_ORDERS_QUERY
 // Query: *[      _type == "order" && clerkUserId == $userId  ] | order(_createdAt desc) {      ...,      products[]{          ...,          product->      }  }
 export type MY_ORDERS_QUERYResult = Array<{
@@ -892,6 +923,7 @@ declare module "@sanity/client" {
     "*[_type == \"product\" && status == \"NOVO\"] | order(name asc) {\n    ...,\n    \"relatedCaps\": relatedCaps[]->{\n      ...\n    }\n  }": PRODUCTS_NEWResult;
     "*[_type == \"product\" && references(*[_type == \"category\" && slug.current == $categorySlug]._id)] | order(name asc)": PRODUCT_BY_CATEGORY_QUERYResult;
     "*[_type == \"category\" && isMainCategory == true] | order(title asc) {\n    title,\n    slug,\n    \"subcategories\": subcategories[]->{\n      title,\n      slug\n    }\n  }": MAIN_CATEGORIES_QUERYResult;
+    "*[_type == 'category'] | order(title asc)": GET_ALL_CATEGORIES_QUERYResult;
     "\n  *[\n      _type == \"order\" && clerkUserId == $userId\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": MY_ORDERS_QUERYResult;
     "\n  *[\n      _type == \"order\"\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": ALL_ORDERS_QUERYResult;
     "\n  *[\n    _type == \"user\"\n  ] | order(_createdAt desc) {\n    ...,\n    orders[] {\n      ...,\n      order-> \n    }\n  }\n": ALL_USERS_QUERYResult;

@@ -21,6 +21,7 @@ interface Props {
 }
 
 const CategoriesCarousel = ({ categories }: Props) => {
+  console.log(categories);
   return (
     <Container className="py-16">
       <h2 className="text-center text-2xl font-semibold uppercase text-gray-600 md:text-left">

@@ -12,7 +12,10 @@ import { ChevronDown, ChevronUp, Menu, X } from "lucide-react";
 
 import Link from "next/link";
 import Image from "next/image";
-import { Category, Order } from "@/sanity.types";
+import {
+  MAIN_CATEGORIES_QUERYResult,
+  MY_ORDERS_QUERYResult,
+} from "@/sanity.types";
 
 import CartIcon from "./CartIcon";
 import Container from "./Container";
@@ -23,8 +26,8 @@ export const RoundedDrawerNavExample = ({
   orders,
   isAdminUser,
 }: {
-  categories: Category[];
-  orders?: Order[];
+  categories: MAIN_CATEGORIES_QUERYResult;
+  orders?: MY_ORDERS_QUERYResult;
   isAdminUser: boolean;
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -134,7 +137,7 @@ const RoundedDrawerNav = ({
   bodyBackground: string;
   children?: ReactNode;
   links: MainLinkType[];
-  orders?: Order[];
+  orders?: MY_ORDERS_QUERYResult;
   isAdminUser: boolean;
 }) => {
   const [hovered, setHovered] = useState<string | null>(null);

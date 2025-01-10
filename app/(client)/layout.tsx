@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import AdressBanner from "@/components/AdressBanner";
 import { RoundedDrawerNavExample } from "@/components/HeaderNew";
-import { getAllCategories, getUserOrders } from "@/sanity/helpers";
+import { getMainCategories, getUserOrders } from "@/sanity/helpers";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
 const poppins = localFont({
@@ -64,7 +64,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const categories = await getAllCategories();
+  const categories = await getMainCategories();
   const user = await currentUser();
   const { userId } = await auth();
   const isAdminUser = userId === process.env.ADMIN_USER_ID;
@@ -83,8 +83,6 @@ export default async function RootLayout({
           <RoundedDrawerNavExample
             categories={categories}
             isAdminUser={isAdminUser}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
             orders={orders}
           />
           {children}
