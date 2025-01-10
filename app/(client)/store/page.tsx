@@ -1,7 +1,6 @@
 import CategorySelector from "@/components/CategorySelector";
 import Container from "@/components/Container";
 import ProductGrid from "@/components/ProductGrid";
-import VolumeSelector from "@/components/VolumeSelector";
 import { getAllProducts, getNonMainCategories } from "@/sanity/helpers";
 import React from "react";
 
@@ -35,7 +34,6 @@ const StorePage = async ({
       </div>
       <div className="flex flex-col gap-4 pb-4 md:flex-row">
         <CategorySelector categories={categories} />
-        <VolumeSelector />
       </div>
       <ProductGrid products={products} />
     </Container>
