@@ -195,6 +195,7 @@ const RoundedDrawerNav = ({
           links={links}
           open={mobileNavOpen}
           isAdminUser={isAdminUser}
+          setOpen={setMobileNavOpen}
         />
       </nav>
     </>
@@ -307,10 +308,12 @@ const MobileLinks = ({
   links,
   open,
   isAdminUser,
+  setOpen,
 }: {
   links: MainLinkType[];
   open: boolean;
   isAdminUser: boolean;
+  setOpen: (open: boolean) => void;
 }) => {
   const [expandedChildLink, setExpandedChildLink] = useState<string | null>(
     null
@@ -375,6 +378,7 @@ const MobileLinks = ({
                                         key={child.title}
                                         className="block text-gray-500"
                                         href={child.href}
+                                        onClick={(open) => setOpen(!open)}
                                       >
                                         {child.title}
                                       </Link>
@@ -384,7 +388,11 @@ const MobileLinks = ({
                             </AnimatePresence>
                           </>
                         ) : (
-                          <Link className="text-gray-600" href={sl.href}>
+                          <Link
+                            className="text-gray-600"
+                            href={sl.href}
+                            onClick={(open) => setOpen(!open)}
+                          >
                             {sl.title}
                           </Link>
                         )}
