@@ -15,7 +15,7 @@ import { ChevronDown, ChevronUp, Menu, X } from "lucide-react";
 
 import Link from "next/link";
 import Image from "next/image";
-import { MAIN_CATEGORIES_QUERYResult, Order } from "@/sanity.types";
+import { Category, Order } from "@/sanity.types";
 
 import CartIcon from "./CartIcon";
 import Container from "./Container";
@@ -26,7 +26,7 @@ export const RoundedDrawerNavExample = ({
   orders,
   isAdminUser,
 }: {
-  categories: MAIN_CATEGORIES_QUERYResult;
+  categories: Category[];
   orders?: Order[];
   isAdminUser: boolean;
 }) => {
