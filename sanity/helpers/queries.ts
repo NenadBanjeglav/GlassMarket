@@ -71,6 +71,12 @@ export const MAIN_CATEGORIES_QUERY = defineQuery(
   }`
 );
 
+export const NON_MAIN_CATEGORIES_QUERY = defineQuery(
+  `*[_type == "category" && isMainCategory != true] | order(title asc) {
+    ...
+  }`
+);
+
 export const GET_ALL_CATEGORIES_QUERY = defineQuery(
   `*[_type == 'category'] | order(title asc)`
 );

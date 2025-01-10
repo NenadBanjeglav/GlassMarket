@@ -13,6 +13,7 @@ import {
   HERO_QUERY,
   MAIN_CATEGORIES_QUERY,
   MY_ORDERS_QUERY,
+  NON_MAIN_CATEGORIES_QUERY,
   PRODUCT_BY_CATEGORY_QUERY,
   PRODUCT_BY_SLUG,
   PRODUCTS_NEW,
@@ -101,6 +102,18 @@ export const getMainCategories = async () => {
     return categories.data || [];
   } catch (error) {
     console.error("Error fetching Main Categories data:", error);
+    return [];
+  }
+};
+
+export const getNonMainCategories = async () => {
+  try {
+    const categories = await sanityFetch({
+      query: NON_MAIN_CATEGORIES_QUERY,
+    });
+    return categories.data || [];
+  } catch (error) {
+    console.error("Error fetching Non Main Categories data:", error);
     return [];
   }
 };

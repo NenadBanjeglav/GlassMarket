@@ -671,14 +671,88 @@ export type PRODUCT_BY_CATEGORY_QUERYResult = Array<{
   }>;
 }>;
 // Variable: MAIN_CATEGORIES_QUERY
-// Query: *[_type == "category" && isMainCategory == true] | order(title asc) {    title,    slug,    "subcategories": subcategories[]->{      title,      slug    }  }
+// Query: *[_type == "category" && isMainCategory == true] | order(title asc) {    ...,    "subcategories": subcategories[]->{      ...    }  }
 export type MAIN_CATEGORIES_QUERYResult = Array<{
-  title: string | null;
-  slug: Slug | null;
+  _id: string;
+  _type: "category";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  isMainCategory?: boolean;
+  description?: string;
+  image?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
   subcategories: Array<{
-    title: string | null;
-    slug: Slug | null;
+    _id: string;
+    _type: "category";
+    _createdAt: string;
+    _updatedAt: string;
+    _rev: string;
+    title?: string;
+    slug?: Slug;
+    isMainCategory?: boolean;
+    description?: string;
+    image?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    };
+    subcategories?: Array<{
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      _key: string;
+      [internalGroqTypeReferenceTo]?: "category";
+    }>;
   }> | null;
+}>;
+// Variable: NON_MAIN_CATEGORIES_QUERY
+// Query: *[_type == "category" && isMainCategory != true] | order(createdAt asc) {    ...  }
+export type NON_MAIN_CATEGORIES_QUERYResult = Array<{
+  _id: string;
+  _type: "category";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  isMainCategory?: boolean;
+  description?: string;
+  image?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  subcategories?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "category";
+  }>;
 }>;
 // Variable: GET_ALL_CATEGORIES_QUERY
 // Query: *[_type == 'category'] | order(title asc)
@@ -922,7 +996,8 @@ declare module "@sanity/client" {
     "*[_type == \"product\" && status == \"AKCIJA\"] | order(name asc) {\n    ...,\n    \"relatedCaps\": relatedCaps[]->{\n      ...\n    }\n  }": PRODUCTS_ON_SALEResult;
     "*[_type == \"product\" && status == \"NOVO\"] | order(name asc) {\n    ...,\n    \"relatedCaps\": relatedCaps[]->{\n      ...\n    }\n  }": PRODUCTS_NEWResult;
     "*[_type == \"product\" && references(*[_type == \"category\" && slug.current == $categorySlug]._id)] | order(name asc)": PRODUCT_BY_CATEGORY_QUERYResult;
-    "*[_type == \"category\" && isMainCategory == true] | order(title asc) {\n    title,\n    slug,\n    \"subcategories\": subcategories[]->{\n      title,\n      slug\n    }\n  }": MAIN_CATEGORIES_QUERYResult;
+    "*[_type == \"category\" && isMainCategory == true] | order(title asc) {\n    ...,\n    \"subcategories\": subcategories[]->{\n      ...\n    }\n  }": MAIN_CATEGORIES_QUERYResult;
+    "*[_type == \"category\" && isMainCategory != true] | order(createdAt asc) {\n    ...\n  }": NON_MAIN_CATEGORIES_QUERYResult;
     "*[_type == 'category'] | order(title asc)": GET_ALL_CATEGORIES_QUERYResult;
     "\n  *[\n      _type == \"order\" && clerkUserId == $userId\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": MY_ORDERS_QUERYResult;
     "\n  *[\n      _type == \"order\"\n  ] | order(_createdAt desc) {\n      ...,\n      products[]{\n          ...,\n          product->\n      }\n  }\n  ": ALL_ORDERS_QUERYResult;

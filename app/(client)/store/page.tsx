@@ -2,7 +2,7 @@ import CategorySelector from "@/components/CategorySelector";
 import Container from "@/components/Container";
 import ProductGrid from "@/components/ProductGrid";
 import VolumeSelector from "@/components/VolumeSelector";
-import { getAllCategories, getAllProducts } from "@/sanity/helpers";
+import { getAllProducts, getNonMainCategories } from "@/sanity/helpers";
 import React from "react";
 
 interface SearchParams {
@@ -18,7 +18,7 @@ const StorePage = async ({
   const params = await searchParams;
   const categorySlug = params?.category;
   const volumeSlug = params?.volume ? parseInt(params.volume || "") : undefined;
-  const categories = await getAllCategories();
+  const categories = await getNonMainCategories();
   const products = await getAllProducts(categorySlug, volumeSlug);
 
   return (
