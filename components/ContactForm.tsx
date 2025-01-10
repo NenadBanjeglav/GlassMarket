@@ -17,6 +17,8 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Loader } from "lucide-react";
 import { z } from "zod";
+import { sendContactFormEmail } from "@/lib/actions";
+import { useState } from "react";
 
 const contactSchema = z
   .object({
@@ -58,6 +60,8 @@ const contactSchema = z
 type ContactFormData = z.infer<typeof contactSchema>;
 
 const Contact = () => {
+  const [isLoading, setisLoading] = useState(false);
+
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
@@ -70,18 +74,25 @@ const Contact = () => {
     },
   });
 
-  const {
-    formState: { isSubmitting },
-    watch,
-    setValue,
-    handleSubmit,
-  } = form;
+  const { watch, setValue, handleSubmit } = form;
 
   const selected = watch("selected");
 
-  const onSubmit = (data: ContactFormData) => {
-    console.log("Form Submitted:", data);
-    form.reset();
+  const onSubmit = async (data: ContactFormData) => {
+    try {
+      setisLoading(true);
+      const response = await sendContactFormEmail(data);
+
+      if (response.success) {
+        console.log("Email sent successfully.");
+        form.reset();
+      }
+    } catch (error) {
+      console.error("Error sending contact form email:", error);
+    } finally {
+      setisLoading(false);
+      form.reset();
+    }
   };
 
   return (
@@ -260,10 +271,10 @@ const Contact = () => {
             {/* Submit Button */}
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isLoading}
               className="mt-6 rounded-lg bg-blue-100 px-8 py-3 text-lg font-semibold !text-lightBlue hover:bg-blue-50"
             >
-              {isSubmitting ? <Loader /> : "Pošalji"}
+              {isLoading ? <Loader className="animate-spin" /> : "Pošalji"}
             </Button>
           </form>
         </Form>

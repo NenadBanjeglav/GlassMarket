@@ -125,7 +125,7 @@ const OrderForm = ({ orderItems }: Props) => {
 
     try {
       const isBanned = await checkUserStatus(data.email);
-      console.log(isBanned);
+
       if (isBanned) {
         toast.error(
           "Vaša email adresa je blokirana. Molimo kontaktirajte podršku."

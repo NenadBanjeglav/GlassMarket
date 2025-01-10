@@ -26,6 +26,50 @@ export interface OrderEmailValues {
   pdfBase64: string;
 }
 
+export interface ContactFormData {
+  selected: "company" | "individual"; // Enum type for selected field
+  name: string; // User's name
+  phone: string; // User's phone number
+  email: string; // User's email address
+  companyName?: string; // Optional company name, required only if "selected" is "company"
+  message: string; // User's message
+}
+
+export async function sendContactFormEmail(values: ContactFormData) {
+  const { name, email, phone, companyName, message, selected } = values;
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
+  const subject = "Nova poruka sa kontakt forme";
+
+  const content = `
+    <h1>Nova poruka sa kontakt forme</h1>
+    <p><strong>Ime:</strong> ${name}</p>
+    <p><strong>Email:</strong> ${email}</p>
+    <p><strong>Telefon:</strong> ${phone}</p>
+    ${
+      selected === "company"
+        ? `<p><strong>Ime kompanije:</strong> ${companyName || "Nije navedeno"}</p>`
+        : ""
+    }
+    <p><strong>Poruka:</strong> ${message}</p>
+  `;
+
+  try {
+    await resend.emails.send({
+      from: "no-reply@glassmarket.dev", // Provereni email za Resend
+      to: ["nenadmobmail@gmail.com"],
+      subject,
+      html: content,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Greška pri slanju email-a sa kontakt forme:", error);
+    throw new Error("Neuspešno slanje email-a sa kontakt forme");
+  }
+}
+
 export async function sendOrderEmailWithPDF(values: OrderEmailValues) {
   const { customerEmail, pdfBase64 } = values;
 
@@ -35,6 +79,7 @@ export async function sendOrderEmailWithPDF(values: OrderEmailValues) {
     await resend.emails.send({
       from: "potvrda@glassmarket.dev",
       to: [customerEmail],
+      bcc: ["nenadmobmail@gmail.com"],
       subject: "Porudžbina - Detalji i PDF",
       react: OrderEmail(values),
       attachments: [

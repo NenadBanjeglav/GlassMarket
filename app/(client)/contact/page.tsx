@@ -9,7 +9,7 @@ const ContactPage = () => {
   return (
     <main>
       <div className="flex flex-col items-center bg-gray-100">
-        <Container className="mt-3 w-full rounded-lg bg-white p-8 shadow-md">
+        <Container className="my-3 w-full rounded-lg bg-white p-8 shadow-md">
           <ShiftingContactForm />
           <div className="flex flex-col justify-between gap-10 pb-10 md:flex-row">
             <address
