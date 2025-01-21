@@ -33,22 +33,28 @@ const Footer = async () => {
           </h3>
           <ul className="mt-4 flex flex-col items-center space-y-2 md:items-start">
             <li>
-              <Link href="#" className="hoverEffect hover:text-red-700">
+              <Link
+                href="/how-to-order"
+                className="hoverEffect hover:text-red-700"
+              >
                 Kako naručiti
               </Link>
             </li>
             <li>
-              <Link href="#" className="hoverEffect hover:text-red-700">
+              <Link
+                href="/payment-options"
+                className="hoverEffect hover:text-red-700"
+              >
                 Način plaćanja
               </Link>
             </li>
             <li>
-              <Link href="#" className="hoverEffect hover:text-red-700">
+              <Link href="/returns" className="hoverEffect hover:text-red-700">
                 Reklamacije
               </Link>
             </li>
             <li>
-              <Link href="#" className="hoverEffect hover:text-red-700">
+              <Link href="/shipping" className="hoverEffect hover:text-red-700">
                 Način i cena dostave
               </Link>
             </li>
