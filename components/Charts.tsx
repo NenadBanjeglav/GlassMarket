@@ -48,15 +48,20 @@ export function Charts({ chartData }: { chartData: ChartData[] }) {
   // Calculate percentage change for the last two months
   const currentMonthSales =
     sortedChartData[sortedChartData.length - 1]?.totalSales || 0;
+
   const previousMonthSales =
-    sortedChartData[sortedChartData.length - 2]?.totalSales || 0;
+    sortedChartData.length > 1
+      ? sortedChartData[sortedChartData.length - 2]?.totalSales
+      : null;
 
-  const salesChange =
-    previousMonthSales > 0
-      ? ((currentMonthSales - previousMonthSales) / previousMonthSales) * 100
-      : 0;
+  let salesChange = 0;
+  let isTrendingUp = false;
 
-  const isTrendingUp = salesChange > 0;
+  if (previousMonthSales !== null && previousMonthSales > 0) {
+    salesChange =
+      ((currentMonthSales - previousMonthSales) / previousMonthSales) * 100;
+    isTrendingUp = salesChange > 0;
+  }
 
   return (
     <Card>
@@ -103,19 +108,25 @@ export function Charts({ chartData }: { chartData: ChartData[] }) {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          {isTrendingUp ? (
-            <>
-              Rast prodaje za {salesChange.toFixed(1)}% ovog meseca{" "}
-              <TrendingUp className="size-4 text-green-500" />
-            </>
-          ) : (
-            <>
-              Pad prodaje za {Math.abs(salesChange).toFixed(1)}% ovog meseca{" "}
-              <TrendingDown className="size-4 text-red-500" />
-            </>
-          )}
-        </div>
+        {previousMonthSales !== null ? (
+          <div className="flex gap-2 font-medium leading-none">
+            {isTrendingUp ? (
+              <>
+                Rast prodaje za {salesChange.toFixed(1)}% ovog meseca{" "}
+                <TrendingUp className="size-4 text-green-500" />
+              </>
+            ) : (
+              <>
+                Pad prodaje za {Math.abs(salesChange).toFixed(1)}% ovog meseca{" "}
+                <TrendingDown className="size-4 text-red-500" />
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="leading-none text-muted-foreground">
+            Nedovoljno podataka za prikaz trenda
+          </div>
+        )}
         <div className="leading-none text-muted-foreground">
           Prikaz ukupne prodaje i dostave za poslednjih 6 meseci
         </div>
