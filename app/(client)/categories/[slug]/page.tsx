@@ -27,7 +27,13 @@ const CategoryPage = async ({ params }: Props) => {
           </div>
 
           <div className="py-8">
-            <ProductGrid products={products} />
+            {products.length === 0 ? (
+              <p className="text-center text-gray-500">
+                Nema proizvoda u ovoj kategoriji
+              </p>
+            ) : (
+              <ProductGrid products={products} />
+            )}
           </div>
         </Container>
       </div>
